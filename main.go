@@ -10,9 +10,8 @@ import (
 
 func main() {
 	var header bool
-	flag.BoolVar(&header, "header", true, "Prints information about the specified ROM file")
+	flag.BoolVar(&header, "header", false, "Prints information about the specified ROM file")
 	flag.Parse()
-
 	l := log.New(os.Stderr, "gogb: ", 0)
 
 	if len(os.Args) < 2 {
