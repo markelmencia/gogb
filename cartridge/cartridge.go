@@ -68,7 +68,7 @@ func PrintHeaderData(cart []byte) error {
 
 	// Manufacturer code
 	if manufacturer[0] == 0x00 {
-		manufacturer = []byte("Old cartridge)")
+		manufacturer = []byte("(Old cartridge)")
 	}
 	fmt.Printf("- Manufacturer code: %s\n", manufacturer)
 
