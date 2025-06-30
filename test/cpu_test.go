@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/markelmencia/gogb/cpu"
@@ -16,52 +17,56 @@ func getExampleCPU() cpu.CPU {
 }
 
 func TestGetter(t *testing.T) {
-	cpu := getExampleCPU()
-	if cpu.GetA() != 0xFA || cpu.GetF() != 0xCE {
+	c := getExampleCPU()
+	if c.Get(cpu.A) != 0xFA || c.Get(cpu.F) != 0xCE {
 		t.Fail()
 	}
 
-	if cpu.GetB() != 0xBE || cpu.GetC() != 0xEF {
+	if c.Get(cpu.B) != 0xBE || c.Get(cpu.C) != 0xEF {
 		t.Fail()
 	}
 
-	if cpu.GetD() != 0xFE || cpu.GetE() != 0xED {
+	if c.Get(cpu.D) != 0xFE || c.Get(cpu.E) != 0xED {
 		t.Fail()
 	}
 
-	if cpu.GetH() != 0xDE || cpu.GetL() != 0xAD {
+	if c.Get(cpu.H) != 0xDE || c.Get(cpu.L) != 0xAD {
 		t.Fail()
 	}
 }
 
 func TestSetter(t *testing.T) {
-	cpu := getExampleCPU()
+	c := getExampleCPU()
 
-	cpu.SetA(0x12)
-	cpu.SetF(0x34)
+	c.Set(cpu.A, 0x12)
+	c.Set(cpu.F, 0x34)
 
-	cpu.SetB(0x13)
-	cpu.SetC(0x37)
+	c.Set(cpu.B, 0x13)
+	c.Set(cpu.C, 0x37)
 
-	cpu.SetD(0x42)
-	cpu.SetE(0x24)
+	c.Set(cpu.D, 0x42)
+	c.Set(cpu.E, 0x24)
 
-	cpu.SetH(0x10)
-	cpu.SetL(0x01)
+	c.Set(cpu.H, 0x10)
+	c.Set(cpu.L, 0x01)
 
-	if cpu.GetA() != 0x12 || cpu.GetF() != 0x34 {
+	fmt.Printf("%X", c.AF)
+
+	if c.Get(cpu.A) != 0x12 || c.Get(cpu.F) != 0x34 {
 		t.Fail()
 	}
 
-	if cpu.GetB() != 0x13 || cpu.GetC() != 0x37 {
+	fmt.Printf("%X", c.AF)
+
+	if c.Get(cpu.B) != 0x13 || c.Get(cpu.C) != 0x37 {
 		t.Fail()
 	}
 
-	if cpu.GetD() != 0x42 || cpu.GetE() != 0x24 {
+	if c.Get(cpu.D) != 0x42 || c.Get(cpu.E) != 0x24 {
 		t.Fail()
 	}
 
-	if cpu.GetH() != 0x10 || cpu.GetL() != 0x01 {
+	if c.Get(cpu.H) != 0x10 || c.Get(cpu.L) != 0x01 {
 		t.Fail()
 	}
 }
