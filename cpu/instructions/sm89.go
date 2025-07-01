@@ -46,3 +46,15 @@ func LDHLr(src cpu.Halve, emu emulator.Emulation) {
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
+
+// LD (HL), n: Load from immediate data (indirect HL)
+//
+// Writes the value of the memory address next to
+// the instruction into the memory address specified in HL.
+func LDHLn(emu emulator.Emulation) {
+	a := emu.CPU.HL
+	emu.CPU.PC++
+	v := emu.RAM.GetByte(emu.CPU.PC)
+	emu.RAM.SetByte(v, a)
+	emu.CPU.PC++
+}

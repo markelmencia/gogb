@@ -65,3 +65,16 @@ func TestLDHLr(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestLDHLn(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.HL = 0x0006
+	instructions.LDHLn(emu)
+	if !(emu.RAM.GetByte(0x0006) == 0x93) {
+		t.Fatal("Unexpected memory value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
