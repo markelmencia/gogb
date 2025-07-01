@@ -204,3 +204,27 @@ func LDHLam(emu emulator.Emulation) {
 	emu.CPU.HL--
 	emu.CPU.PC++
 }
+
+// LD A, (HL+): Load accumulator (indirect HL, increment)
+//
+// Loads the memory value in the specified index at HL
+// into the register A. Then, HL is incremented by 1.
+func LDaHLp(emu emulator.Emulation) {
+	a := emu.CPU.HL
+	v := emu.RAM.GetByte(a)
+	emu.CPU.Set(cpu.A, v)
+	emu.CPU.HL++
+	emu.CPU.PC++
+}
+
+// LD (HL-), A: Load from accumulator (indirect HL, increment)
+//
+// Loads into the memory position in HL
+// the value in register A, then increments HL
+func LDHLap(emu emulator.Emulation) {
+	a := emu.CPU.HL
+	v := emu.CPU.Get(cpu.A)
+	emu.RAM.SetByte(v, a)
+	emu.CPU.HL++
+	emu.CPU.PC++
+}

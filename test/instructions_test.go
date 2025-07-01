@@ -253,3 +253,40 @@ func TestLDHLam(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestLDaHLp(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.HL = 0x0007
+	instructions.LDaHLp(emu)
+
+	if emu.CPU.Get(cpu.A) != 0x03 {
+		t.Fatal("Unexpected register value in A")
+	}
+
+	if emu.CPU.HL != 0x0008 {
+		t.Fatal("HL did not increment")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestLDHLap(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.Set(cpu.A, 0x37)
+	emu.CPU.HL = 0x0007
+	instructions.LDHLap(emu)
+
+	if emu.RAM.GetByte(0x007) != 0x37 {
+		t.Fatal("Unexpected memory value")
+	}
+
+	if emu.CPU.HL != 0x0008 {
+		t.Fatal("HL did not increment")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
