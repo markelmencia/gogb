@@ -21,4 +21,13 @@ func TestGetterSetter(t *testing.T) {
 		t.Fatal("Unexpected value after set")
 	}
 
+	if r.Get16Bit(1) != 0xFF93 {
+		t.Fatal("Unexpected value in getter")
+	}
+
+	r.Set16Bit(0x3412, 3)
+	if r.Get16Bit(3) != 0x3412 {
+		t.Fatal("Unexpected value in getter")
+	}
+
 }
