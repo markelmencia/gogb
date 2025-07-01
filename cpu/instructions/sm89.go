@@ -136,3 +136,14 @@ func LDnnA(emu emulator.Emulation) {
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
+
+// LDH A, (C): Load accumulator (indirect 0xFF00+C)
+//
+// Loads the value in memory of the address 0xFF00 + C
+// into A
+func LDHaC(emu emulator.Emulation) {
+	a := 0xFF00 | uint16(emu.CPU.Get(cpu.C))
+	v := emu.RAM.GetByte(a)
+	emu.CPU.Set(cpu.A, v)
+	emu.CPU.PC++
+}
