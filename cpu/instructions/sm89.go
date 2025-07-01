@@ -58,3 +58,13 @@ func LDHLn(emu emulator.Emulation) {
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
+
+// LD A, (BC): Load accumulator (indirect BC)
+//
+// Loads the memory value specified in BC into A.
+func LDaBC(emu emulator.Emulation) {
+	a := emu.CPU.BC
+	v := emu.RAM.GetByte(a)
+	emu.CPU.Set(cpu.A, v)
+	emu.CPU.PC++
+}
