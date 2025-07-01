@@ -192,3 +192,15 @@ func LDaHLm(emu emulator.Emulation) {
 	emu.CPU.HL--
 	emu.CPU.PC++
 }
+
+// LD (HL-), A: Load from accumulator (indirect HL, decrement)
+//
+// Loads into the memory position in HL
+// the value in register A, then decrements HL
+func LDHLam(emu emulator.Emulation) {
+	a := emu.CPU.HL
+	v := emu.CPU.Get(cpu.A)
+	emu.RAM.SetByte(v, a)
+	emu.CPU.HL--
+	emu.CPU.PC++
+}

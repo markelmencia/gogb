@@ -234,3 +234,22 @@ func TestLDaHLm(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestLDHLam(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.Set(cpu.A, 0x37)
+	emu.CPU.HL = 0x0007
+	instructions.LDHLam(emu)
+
+	if emu.RAM.GetByte(0x007) != 0x37 {
+		t.Fatal("Unexpected memory value")
+	}
+
+	if emu.CPU.HL != 0x0006 {
+		t.Fatal("HL did not decrement")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
