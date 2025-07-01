@@ -14,13 +14,24 @@ func LDrr(dst, src cpu.Halve, emu emulator.Emulation) {
 	emu.CPU.PC++
 }
 
-// LD r n: Load register (immediate)
+// LD r, n: Load register (immediate)
 //
 // Loads n (the value in memory next to the instruction)
-// in register r.
+// into register r.
 func LDra(dst cpu.Halve, emu emulator.Emulation) {
 	emu.CPU.PC++
 	v := emu.RAM.GetByte(emu.CPU.PC)
+	emu.CPU.Set(dst, v)
+	emu.CPU.PC++
+}
+
+// LD r, (HL): Load register (indirect HL)
+//
+// Loads the memory value in the index inside register
+// HL (16 bits) into r
+func LDrHL(dst cpu.Halve, emu emulator.Emulation) {
+	a := emu.CPU.HL
+	v := emu.RAM.GetByte(a)
 	emu.CPU.Set(dst, v)
 	emu.CPU.PC++
 }
