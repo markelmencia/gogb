@@ -228,3 +228,17 @@ func LDHLap(emu emulator.Emulation) {
 	emu.CPU.HL++
 	emu.CPU.PC++
 }
+
+// LD rr, nn: Load 16-bit register / register pair
+//
+// Loads into rr the immediate data in the next
+// two registers from the instruction
+func LDrrnn(rr cpu.Register, emu emulator.Emulation) {
+	emu.CPU.PC++
+	nLo := emu.RAM.GetByte(emu.CPU.PC)
+	emu.CPU.PC++
+	nHi := emu.RAM.GetByte(emu.CPU.PC)
+	v := uint16(nHi)<<8 | uint16(nLo)
+	emu.CPU.SetReg(rr, v)
+	emu.CPU.PC++
+}

@@ -38,6 +38,7 @@ const (
 )
 
 // Represents a GB CPU.
+// TODO: Perhaps remove exportation
 type CPU struct {
 	// Registers
 	// Combined registers (two 8-bit registers combined)

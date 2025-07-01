@@ -290,3 +290,15 @@ func TestLDHLap(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestLDrrnn(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.LDrrnn(cpu.HL, emu)
+	if emu.CPU.GetReg(cpu.HL) != 0xFF93 {
+		t.Fatal("Unexpected register value in HL")
+	}
+
+	if emu.CPU.PC != 3 {
+		t.Fatal("Unexpected PC value")
+	}
+}
