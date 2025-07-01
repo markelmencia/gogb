@@ -8,6 +8,6 @@ import (
 // Represents an instance of an emulation
 type Emulation struct {
 	CPU *cpu.CPU
-	RAM ram.RAM
-	ROM []byte
+	RAM *ram.RAM
+	ROM *[]byte
 }
