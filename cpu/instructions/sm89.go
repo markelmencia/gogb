@@ -150,7 +150,7 @@ func LDHaC(emu emulator.Emulation) {
 
 // LDH (C), A: Load from accumulator (indirect 0xFF00+C)
 //
-// Loads the value of A into the memory address 0xFF + C
+// Loads the value of A into the memory address 0xFF00 + C
 func LDHCa(emu emulator.Emulation) {
 	a := 0xFF00 | uint16(emu.CPU.Get(cpu.C))
 	v := emu.CPU.Get(cpu.A)
@@ -160,11 +160,23 @@ func LDHCa(emu emulator.Emulation) {
 
 // LDH A, (n): Load accumulator (indirect 0xFF00+n)
 //
-// Loads the value of A into the memory address 0xFF + C
+// Loads the value memory in 0xFF00 + n (next value
+// in memory from the instruction) into A
 func LDHAn(emu emulator.Emulation) {
 	emu.CPU.PC++
 	a := 0xFF00 | uint16(emu.RAM.GetByte(emu.CPU.PC))
 	v := emu.RAM.GetByte(a)
 	emu.CPU.Set(cpu.A, v)
+	emu.CPU.PC++
+}
+
+// LDH (n), A: Load from accumulator (indirect 0xFF00+n)
+//
+// Loads the value of A into the memory address 0xFF + n
+func LDHnA(emu emulator.Emulation) {
+	emu.CPU.PC++
+	a := 0xFF00 | uint16(emu.RAM.GetByte(emu.CPU.PC))
+	v := emu.CPU.Get(cpu.A)
+	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
