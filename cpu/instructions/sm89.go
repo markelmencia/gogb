@@ -180,3 +180,15 @@ func LDHnA(emu emulator.Emulation) {
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
+
+// LD A, (HL-): Load accumulator (indirect HL, decrement)
+//
+// Loads the memory value in the specified index at HL
+// into the register A. Then, HL is decremented by 1.
+func LDaHLm(emu emulator.Emulation) {
+	a := emu.CPU.HL
+	v := emu.RAM.GetByte(a)
+	emu.CPU.Set(cpu.A, v)
+	emu.CPU.HL--
+	emu.CPU.PC++
+}

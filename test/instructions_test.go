@@ -216,3 +216,21 @@ func TestLDHnA(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestLDaHLm(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.HL = 0x0007
+	instructions.LDaHLm(emu)
+
+	if emu.CPU.Get(cpu.A) != 0x03 {
+		t.Fatal("Unexpected register value in A")
+	}
+
+	if emu.CPU.HL != 0x0006 {
+		t.Fatal("HL did not decrement")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
