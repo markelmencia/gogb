@@ -28,10 +28,21 @@ func LDra(dst cpu.Halve, emu emulator.Emulation) {
 // LD r, (HL): Load register (indirect HL)
 //
 // Loads the memory value in the index inside register
-// HL (16 bits) into r
+// HL (16 bits) into r.
 func LDrHL(dst cpu.Halve, emu emulator.Emulation) {
 	a := emu.CPU.HL
 	v := emu.RAM.GetByte(a)
 	emu.CPU.Set(dst, v)
+	emu.CPU.PC++
+}
+
+// LD (HL), r: Load from register (indirect HL)
+//
+// Writes the value in register r into the memory
+// address specified in HL.
+func LDHLr(src cpu.Halve, emu emulator.Emulation) {
+	a := emu.CPU.HL
+	v := emu.CPU.Get(src)
+	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }

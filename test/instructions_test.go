@@ -12,7 +12,7 @@ func getExampleEmulation() emulator.Emulation {
 	return emulator.Emulation{
 		CPU: getExampleCPU(),
 		RAM: getExampleRAM(),
-		ROM: []byte{},
+		ROM: &[]byte{},
 	}
 }
 
@@ -42,10 +42,23 @@ func TestLDra(t *testing.T) {
 
 func TestLDrHL(t *testing.T) {
 	emu := getExampleEmulation()
-	emu.CPU.HL = 0x05
+	emu.CPU.HL = 0x0005
 	instructions.LDrHL(cpu.B, emu)
 	if !(emu.CPU.Get(cpu.B) == 0xDD) {
 		t.Fatal("B does not match expected memory value")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestLDHLr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.HL = 0x0002
+	instructions.LDHLr(cpu.E, emu)
+	if !(emu.RAM.GetByte(0x0002) == 0xED) {
+		t.Fatal("E does not match expected memory value")
 	}
 
 	if emu.CPU.PC != 1 {
