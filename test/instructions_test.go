@@ -84,7 +84,7 @@ func TestLDaBC(t *testing.T) {
 	emu.CPU.BC = 0x0007
 	instructions.LDaBC(emu)
 	if !(emu.CPU.Get(cpu.A) == 0x03) {
-		t.Fatal("Unexpected memory value")
+		t.Fatal("Unexpected register value in A")
 	}
 
 	if emu.CPU.PC != 1 {
@@ -97,6 +97,20 @@ func TestLDaDE(t *testing.T) {
 	emu.CPU.DE = 0x0007
 	instructions.LDaDE(emu)
 	if !(emu.CPU.Get(cpu.A) == 0x03) {
+		t.Fatal("Unexpected register value in A")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestLDBCa(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.Set(cpu.A, 0x61)
+	emu.CPU.BC = 0x0001
+	instructions.LDBCa(emu)
+	if !(emu.RAM.GetByte(0x0001) == 0x61) {
 		t.Fatal("Unexpected memory value")
 	}
 

@@ -78,3 +78,14 @@ func LDaDE(emu emulator.Emulation) {
 	emu.CPU.Set(cpu.A, v)
 	emu.CPU.PC++
 }
+
+// LD (BC), a: Load accumulator (indirect BC)
+//
+// Writes the value of register A into the
+// address specified in BC.
+func LDBCa(emu emulator.Emulation) {
+	a := emu.CPU.BC
+	v := emu.CPU.Get(cpu.A)
+	emu.RAM.SetByte(v, a)
+	emu.CPU.PC++
+}
