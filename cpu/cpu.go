@@ -1,6 +1,8 @@
 package cpu
 
-// Masks that allow splitting combined registers
+import "fmt"
+
+// Masks that allow splitting combined registers.
 const (
 	HIGH_MASK uint16 = 0xFF00
 	LOW_MASK  uint16 = 0x00FF
@@ -8,6 +10,8 @@ const (
 
 type Halve byte
 
+// Defines an enum for each halve register
+// in the CPU.
 const (
 	A Halve = iota
 	F
@@ -18,6 +22,38 @@ const (
 	H
 	L
 )
+
+// Represents a GB CPU.
+type CPU struct {
+	// Registers
+	// Combined registers (two 8-bit registers combined)
+	// NOTE: the second letter represents the lower register
+	AF uint16 // Acummulator / Flag Register
+	BC uint16
+	DE uint16
+	HL uint16
+	// 16-bit registers
+	IR uint16 // Instruction Register
+	IE uint16 // Interrupt Enable
+	SP uint16 // Stack Pointer
+	PC uint16 // Program Counter
+}
+
+// Prints the values of all registers
+// at the current CPU state.
+func (c CPU) PrintStatus() {
+	fmt.Printf("CPU Status:\n\n")
+	fmt.Printf("AF: 0x%X\n", c.AF)
+	fmt.Printf("BC: 0x%X\n", c.BC)
+	fmt.Printf("DE: 0x%X\n", c.DE)
+	fmt.Printf("HL: 0x%X\n", c.HL)
+	fmt.Printf("IR: 0x%X\n", c.IR)
+	fmt.Printf("IE: 0x%X\n", c.IE)
+	fmt.Printf("SP: 0x%X\n", c.SP)
+	fmt.Printf("PC: 0x%X\n", c.PC)
+}
+
+// Getters / Setters
 
 // Interface that stores both
 // the getter and the setter
@@ -39,7 +75,7 @@ type HalveAccessor struct {
 // to only keep the halve of the register we do not want to change.
 
 // Map that contains a getter/setter pair
-// for each Halve register
+// for each Halve register.
 var halveToAccessor = map[Halve]HalveAccessor{
 	A: {
 		Get: func(c *CPU) byte {
@@ -116,29 +152,13 @@ var halveToAccessor = map[Halve]HalveAccessor{
 }
 
 // Gets the appropiate register getter
-// and returns the value of the register
+// and returns the value of the register.
 func (c *CPU) Get(h Halve) byte {
 	return halveToAccessor[h].Get(c)
 }
 
 // Gets the appropiate register setter
-// and sets v into the register
+// and sets v into the register.
 func (c *CPU) Set(h Halve, v byte) {
 	halveToAccessor[h].Set(c, v)
-}
-
-// Represents a GB CPU.
-type CPU struct {
-	// Registers
-	// Combined registers (two 8-bit registers combined)
-	// NOTE: the second letter represents the lower register
-	AF uint16 // Acummulator / Flag Register
-	BC uint16
-	DE uint16
-	HL uint16
-	// 16-bit registers
-	IR uint16 // Instruction Register
-	IE uint16 // Interrupt Enable
-	SP uint16 // Stack Pointer
-	PC uint16 // Program Counter
 }
