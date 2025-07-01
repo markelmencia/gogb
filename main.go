@@ -27,6 +27,10 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		cartridge.PrintHeaderData(cart)
+		hdErr := cartridge.PrintHeaderData(cart)
+		if hdErr != nil {
+			l.Fatal(hdErr)
+		}
+		return // Execution ends
 	}
 }
