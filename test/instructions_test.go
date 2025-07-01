@@ -173,3 +173,18 @@ func TestLDHaC(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestLDHCa(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.Set(cpu.A, 0x47)
+	emu.CPU.Set(cpu.C, 0xAF)
+	instructions.LDHCa(emu)
+
+	if emu.RAM.GetByte(0xFFAF) != 0x47 {
+		t.Fatal("Unexpected memory value")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
