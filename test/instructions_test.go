@@ -145,3 +145,16 @@ func TestLDAnn(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestLDnnA(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.Set(cpu.A, 0x32)
+	instructions.LDnnA(emu)
+	if emu.RAM.GetByte(0xFF93) != 0x32 {
+		t.Fatal("Unexpected register value in A")
+	}
+
+	if emu.CPU.PC != 3 {
+		t.Fatal("Unexpected PC value")
+	}
+}

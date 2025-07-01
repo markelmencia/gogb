@@ -118,3 +118,21 @@ func LDAnn(emu emulator.Emulation) {
 	emu.CPU.Set(cpu.A, v)
 	emu.CPU.PC++
 }
+
+// LD (nn), A: Load from accumulator (direct)
+//
+// Writes into the memory address
+// specified by the next two RAM bytes
+// of the instruction the value of A.
+func LDnnA(emu emulator.Emulation) {
+	emu.CPU.PC++
+	nLo := emu.RAM.GetByte(emu.CPU.PC)
+	emu.CPU.PC++
+	nHi := emu.RAM.GetByte(emu.CPU.PC)
+
+	a := uint16(nHi)<<8 | uint16(nLo)
+	v := emu.CPU.Get(cpu.A)
+
+	emu.RAM.SetByte(v, a)
+	emu.CPU.PC++
+}
