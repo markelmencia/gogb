@@ -19,7 +19,7 @@ func getExampleEmulation() emulator.Emulation {
 func TestLDrr(t *testing.T) {
 	emu := getExampleEmulation()
 	instructions.LDrr(cpu.A, cpu.E, emu)
-	if !(emu.CPU.Get(cpu.A) == emu.CPU.Get(cpu.E)) {
+	if !(emu.CPU.GetHalve(cpu.A) == emu.CPU.GetHalve(cpu.E)) {
 		t.Fatal("A does not match E")
 	}
 
@@ -31,7 +31,7 @@ func TestLDrr(t *testing.T) {
 func TestLDra(t *testing.T) {
 	emu := getExampleEmulation()
 	instructions.LDra(cpu.F, emu)
-	if !(emu.CPU.Get(cpu.F) == 0x93) {
+	if !(emu.CPU.GetHalve(cpu.F) == 0x93) {
 		t.Fatal("F does not match expected memory value")
 	}
 
@@ -44,7 +44,7 @@ func TestLDrHL(t *testing.T) {
 	emu := getExampleEmulation()
 	emu.CPU.HL = 0x0005
 	instructions.LDrHL(cpu.B, emu)
-	if !(emu.CPU.Get(cpu.B) == 0xDD) {
+	if !(emu.CPU.GetHalve(cpu.B) == 0xDD) {
 		t.Fatal("B does not match expected memory value")
 	}
 
@@ -83,7 +83,7 @@ func TestLDaBC(t *testing.T) {
 	emu := getExampleEmulation()
 	emu.CPU.BC = 0x0007
 	instructions.LDaBC(emu)
-	if !(emu.CPU.Get(cpu.A) == 0x03) {
+	if !(emu.CPU.GetHalve(cpu.A) == 0x03) {
 		t.Fatal("Unexpected register value in A")
 	}
 
@@ -96,7 +96,7 @@ func TestLDaDE(t *testing.T) {
 	emu := getExampleEmulation()
 	emu.CPU.DE = 0x0007
 	instructions.LDaDE(emu)
-	if !(emu.CPU.Get(cpu.A) == 0x03) {
+	if !(emu.CPU.GetHalve(cpu.A) == 0x03) {
 		t.Fatal("Unexpected register value in A")
 	}
 
@@ -107,7 +107,7 @@ func TestLDaDE(t *testing.T) {
 
 func TestLDBCa(t *testing.T) {
 	emu := getExampleEmulation()
-	emu.CPU.Set(cpu.A, 0x61)
+	emu.CPU.SetHalve(cpu.A, 0x61)
 	emu.CPU.BC = 0x0001
 	instructions.LDBCa(emu)
 	if !(emu.RAM.GetByte(0x0001) == 0x61) {
@@ -121,7 +121,7 @@ func TestLDBCa(t *testing.T) {
 
 func TestLDECa(t *testing.T) {
 	emu := getExampleEmulation()
-	emu.CPU.Set(cpu.A, 0x61)
+	emu.CPU.SetHalve(cpu.A, 0x61)
 	emu.CPU.DE = 0x0001
 	instructions.LDDEa(emu)
 	if !(emu.RAM.GetByte(0x0001) == 0x61) {
@@ -137,7 +137,7 @@ func TestLDAnn(t *testing.T) {
 	emu := getExampleEmulation()
 	emu.RAM.SetByte(0x32, 0xFF93)
 	instructions.LDAnn(emu)
-	if emu.CPU.Get(cpu.A) != 0x32 {
+	if emu.CPU.GetHalve(cpu.A) != 0x32 {
 		t.Fatal("Unexpected register value in A")
 	}
 
@@ -148,7 +148,7 @@ func TestLDAnn(t *testing.T) {
 
 func TestLDnnA(t *testing.T) {
 	emu := getExampleEmulation()
-	emu.CPU.Set(cpu.A, 0x32)
+	emu.CPU.SetHalve(cpu.A, 0x32)
 	instructions.LDnnA(emu)
 	if emu.RAM.GetByte(0xFF93) != 0x32 {
 		t.Fatal("Unexpected register value in A")
@@ -162,10 +162,10 @@ func TestLDnnA(t *testing.T) {
 func TestLDHaC(t *testing.T) {
 	emu := getExampleEmulation()
 	emu.RAM.SetByte(0x47, 0xFFAF)
-	emu.CPU.Set(cpu.C, 0xAF)
+	emu.CPU.SetHalve(cpu.C, 0xAF)
 	instructions.LDHaC(emu)
 
-	if emu.CPU.Get(cpu.A) != 0x47 {
+	if emu.CPU.GetHalve(cpu.A) != 0x47 {
 		t.Fatal("Unexpected register value in A")
 	}
 
@@ -176,8 +176,8 @@ func TestLDHaC(t *testing.T) {
 
 func TestLDHCa(t *testing.T) {
 	emu := getExampleEmulation()
-	emu.CPU.Set(cpu.A, 0x47)
-	emu.CPU.Set(cpu.C, 0xAF)
+	emu.CPU.SetHalve(cpu.A, 0x47)
+	emu.CPU.SetHalve(cpu.C, 0xAF)
 	instructions.LDHCa(emu)
 
 	if emu.RAM.GetByte(0xFFAF) != 0x47 {
@@ -194,7 +194,7 @@ func TestLDHAn(t *testing.T) {
 	emu.RAM.SetByte(0x47, 0xFF93)
 	instructions.LDHAn(emu)
 
-	if emu.CPU.Get(cpu.A) != 0x47 {
+	if emu.CPU.GetHalve(cpu.A) != 0x47 {
 		t.Fatal("Unexpected register value in A")
 	}
 
@@ -205,7 +205,7 @@ func TestLDHAn(t *testing.T) {
 
 func TestLDHnA(t *testing.T) {
 	emu := getExampleEmulation()
-	emu.CPU.Set(cpu.A, 0x47)
+	emu.CPU.SetHalve(cpu.A, 0x47)
 	instructions.LDHnA(emu)
 
 	if emu.RAM.GetByte(0xFF93) != 0x47 {
@@ -222,7 +222,7 @@ func TestLDaHLm(t *testing.T) {
 	emu.CPU.HL = 0x0007
 	instructions.LDaHLm(emu)
 
-	if emu.CPU.Get(cpu.A) != 0x03 {
+	if emu.CPU.GetHalve(cpu.A) != 0x03 {
 		t.Fatal("Unexpected register value in A")
 	}
 
@@ -237,7 +237,7 @@ func TestLDaHLm(t *testing.T) {
 
 func TestLDHLam(t *testing.T) {
 	emu := getExampleEmulation()
-	emu.CPU.Set(cpu.A, 0x37)
+	emu.CPU.SetHalve(cpu.A, 0x37)
 	emu.CPU.HL = 0x0007
 	instructions.LDHLam(emu)
 
@@ -259,7 +259,7 @@ func TestLDaHLp(t *testing.T) {
 	emu.CPU.HL = 0x0007
 	instructions.LDaHLp(emu)
 
-	if emu.CPU.Get(cpu.A) != 0x03 {
+	if emu.CPU.GetHalve(cpu.A) != 0x03 {
 		t.Fatal("Unexpected register value in A")
 	}
 
@@ -274,7 +274,7 @@ func TestLDaHLp(t *testing.T) {
 
 func TestLDHLap(t *testing.T) {
 	emu := getExampleEmulation()
-	emu.CPU.Set(cpu.A, 0x37)
+	emu.CPU.SetHalve(cpu.A, 0x37)
 	emu.CPU.HL = 0x0007
 	instructions.LDHLap(emu)
 

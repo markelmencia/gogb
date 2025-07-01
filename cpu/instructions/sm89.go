@@ -9,8 +9,8 @@ import (
 //
 // Loads the value of r' into r
 func LDrr(dst, src cpu.Halve, emu emulator.Emulation) {
-	v := emu.CPU.Get(src)
-	emu.CPU.Set(dst, v)
+	v := emu.CPU.GetHalve(src)
+	emu.CPU.SetHalve(dst, v)
 	emu.CPU.PC++
 }
 
@@ -21,7 +21,7 @@ func LDrr(dst, src cpu.Halve, emu emulator.Emulation) {
 func LDra(dst cpu.Halve, emu emulator.Emulation) {
 	emu.CPU.PC++
 	v := emu.RAM.GetByte(emu.CPU.PC)
-	emu.CPU.Set(dst, v)
+	emu.CPU.SetHalve(dst, v)
 	emu.CPU.PC++
 }
 
@@ -32,7 +32,7 @@ func LDra(dst cpu.Halve, emu emulator.Emulation) {
 func LDrHL(dst cpu.Halve, emu emulator.Emulation) {
 	a := emu.CPU.HL
 	v := emu.RAM.GetByte(a)
-	emu.CPU.Set(dst, v)
+	emu.CPU.SetHalve(dst, v)
 	emu.CPU.PC++
 }
 
@@ -42,7 +42,7 @@ func LDrHL(dst cpu.Halve, emu emulator.Emulation) {
 // address specified in HL.
 func LDHLr(src cpu.Halve, emu emulator.Emulation) {
 	a := emu.CPU.HL
-	v := emu.CPU.Get(src)
+	v := emu.CPU.GetHalve(src)
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
@@ -65,7 +65,7 @@ func LDHLn(emu emulator.Emulation) {
 func LDaBC(emu emulator.Emulation) {
 	a := emu.CPU.BC
 	v := emu.RAM.GetByte(a)
-	emu.CPU.Set(cpu.A, v)
+	emu.CPU.SetHalve(cpu.A, v)
 	emu.CPU.PC++
 }
 
@@ -75,7 +75,7 @@ func LDaBC(emu emulator.Emulation) {
 func LDaDE(emu emulator.Emulation) {
 	a := emu.CPU.DE
 	v := emu.RAM.GetByte(a)
-	emu.CPU.Set(cpu.A, v)
+	emu.CPU.SetHalve(cpu.A, v)
 	emu.CPU.PC++
 }
 
@@ -85,7 +85,7 @@ func LDaDE(emu emulator.Emulation) {
 // address specified in BC.
 func LDBCa(emu emulator.Emulation) {
 	a := emu.CPU.BC
-	v := emu.CPU.Get(cpu.A)
+	v := emu.CPU.GetHalve(cpu.A)
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
@@ -96,7 +96,7 @@ func LDBCa(emu emulator.Emulation) {
 // address specified in BC.
 func LDDEa(emu emulator.Emulation) {
 	a := emu.CPU.DE
-	v := emu.CPU.Get(cpu.A)
+	v := emu.CPU.GetHalve(cpu.A)
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
@@ -115,7 +115,7 @@ func LDAnn(emu emulator.Emulation) {
 	a := uint16(nHi)<<8 | uint16(nLo)
 	v := emu.RAM.GetByte(a)
 
-	emu.CPU.Set(cpu.A, v)
+	emu.CPU.SetHalve(cpu.A, v)
 	emu.CPU.PC++
 }
 
@@ -131,7 +131,7 @@ func LDnnA(emu emulator.Emulation) {
 	nHi := emu.RAM.GetByte(emu.CPU.PC)
 
 	a := uint16(nHi)<<8 | uint16(nLo)
-	v := emu.CPU.Get(cpu.A)
+	v := emu.CPU.GetHalve(cpu.A)
 
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
@@ -142,9 +142,9 @@ func LDnnA(emu emulator.Emulation) {
 // Loads the value in memory of the address 0xFF00 + C
 // into A
 func LDHaC(emu emulator.Emulation) {
-	a := 0xFF00 | uint16(emu.CPU.Get(cpu.C))
+	a := 0xFF00 | uint16(emu.CPU.GetHalve(cpu.C))
 	v := emu.RAM.GetByte(a)
-	emu.CPU.Set(cpu.A, v)
+	emu.CPU.SetHalve(cpu.A, v)
 	emu.CPU.PC++
 }
 
@@ -152,8 +152,8 @@ func LDHaC(emu emulator.Emulation) {
 //
 // Loads the value of A into the memory address 0xFF00 + C
 func LDHCa(emu emulator.Emulation) {
-	a := 0xFF00 | uint16(emu.CPU.Get(cpu.C))
-	v := emu.CPU.Get(cpu.A)
+	a := 0xFF00 | uint16(emu.CPU.GetHalve(cpu.C))
+	v := emu.CPU.GetHalve(cpu.A)
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
@@ -166,7 +166,7 @@ func LDHAn(emu emulator.Emulation) {
 	emu.CPU.PC++
 	a := 0xFF00 | uint16(emu.RAM.GetByte(emu.CPU.PC))
 	v := emu.RAM.GetByte(a)
-	emu.CPU.Set(cpu.A, v)
+	emu.CPU.SetHalve(cpu.A, v)
 	emu.CPU.PC++
 }
 
@@ -176,7 +176,7 @@ func LDHAn(emu emulator.Emulation) {
 func LDHnA(emu emulator.Emulation) {
 	emu.CPU.PC++
 	a := 0xFF00 | uint16(emu.RAM.GetByte(emu.CPU.PC))
-	v := emu.CPU.Get(cpu.A)
+	v := emu.CPU.GetHalve(cpu.A)
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
@@ -188,7 +188,7 @@ func LDHnA(emu emulator.Emulation) {
 func LDaHLm(emu emulator.Emulation) {
 	a := emu.CPU.HL
 	v := emu.RAM.GetByte(a)
-	emu.CPU.Set(cpu.A, v)
+	emu.CPU.SetHalve(cpu.A, v)
 	emu.CPU.HL--
 	emu.CPU.PC++
 }
@@ -199,7 +199,7 @@ func LDaHLm(emu emulator.Emulation) {
 // the value in register A, then decrements HL
 func LDHLam(emu emulator.Emulation) {
 	a := emu.CPU.HL
-	v := emu.CPU.Get(cpu.A)
+	v := emu.CPU.GetHalve(cpu.A)
 	emu.RAM.SetByte(v, a)
 	emu.CPU.HL--
 	emu.CPU.PC++
@@ -212,7 +212,7 @@ func LDHLam(emu emulator.Emulation) {
 func LDaHLp(emu emulator.Emulation) {
 	a := emu.CPU.HL
 	v := emu.RAM.GetByte(a)
-	emu.CPU.Set(cpu.A, v)
+	emu.CPU.SetHalve(cpu.A, v)
 	emu.CPU.HL++
 	emu.CPU.PC++
 }
@@ -223,7 +223,7 @@ func LDaHLp(emu emulator.Emulation) {
 // the value in register A, then increments HL
 func LDHLap(emu emulator.Emulation) {
 	a := emu.CPU.HL
-	v := emu.CPU.Get(cpu.A)
+	v := emu.CPU.GetHalve(cpu.A)
 	emu.RAM.SetByte(v, a)
 	emu.CPU.HL++
 	emu.CPU.PC++

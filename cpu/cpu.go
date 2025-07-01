@@ -9,6 +9,7 @@ const (
 )
 
 type Halve byte
+type Register byte
 
 // Defines an enum for each halve register
 // in the CPU.
@@ -21,6 +22,19 @@ const (
 	E
 	H
 	L
+)
+
+// Defines an enum for each register
+// in the CPU.
+const (
+	AF Register = iota
+	BC
+	DE
+	HL
+	IR
+	IE
+	SP
+	PC
 )
 
 // Represents a GB CPU.
@@ -39,20 +53,6 @@ type CPU struct {
 	PC uint16 // Program Counter
 }
 
-// Prints the values of all registers
-// at the current CPU state.
-func (c CPU) PrintStatus() {
-	fmt.Printf("CPU Status:\n\n")
-	fmt.Printf("AF: 0x%X\n", c.AF)
-	fmt.Printf("BC: 0x%X\n", c.BC)
-	fmt.Printf("DE: 0x%X\n", c.DE)
-	fmt.Printf("HL: 0x%X\n", c.HL)
-	fmt.Printf("IR: 0x%X\n", c.IR)
-	fmt.Printf("IE: 0x%X\n", c.IE)
-	fmt.Printf("SP: 0x%X\n", c.SP)
-	fmt.Printf("PC: 0x%X\n", c.PC)
-}
-
 // Getters / Setters
 
 // Interface that stores both
@@ -61,6 +61,14 @@ func (c CPU) PrintStatus() {
 type HalveAccessor struct {
 	Get func(*CPU) byte
 	Set func(*CPU, byte)
+}
+
+// Interface that stores both
+// the getter and the setter
+// of a register.
+type RegisterAccessor struct {
+	Get func(*CPU) uint16
+	Set func(*CPU, uint16)
 }
 
 // Getter note: In order to get the isolated value of a high 8-bit
@@ -153,12 +161,107 @@ var halveToAccessor = map[Halve]HalveAccessor{
 
 // Gets the appropiate register getter
 // and returns the value of the register.
-func (c *CPU) Get(h Halve) byte {
+func (c *CPU) GetHalve(h Halve) byte {
 	return halveToAccessor[h].Get(c)
 }
 
 // Gets the appropiate register setter
 // and sets v into the register.
-func (c *CPU) Set(h Halve, v byte) {
+func (c *CPU) SetHalve(h Halve, v byte) {
 	halveToAccessor[h].Set(c, v)
+}
+
+// Map that contains a getter/setter pair
+// for each register.
+var registerToAccessor = map[Register]RegisterAccessor{
+	AF: {
+		Get: func(c *CPU) uint16 {
+			return c.AF
+		},
+		Set: func(c *CPU, v uint16) {
+			c.AF = v
+		},
+	},
+	BC: {
+		Get: func(c *CPU) uint16 {
+			return c.BC
+		},
+		Set: func(c *CPU, v uint16) {
+			c.BC = v
+		},
+	},
+	DE: {
+		Get: func(c *CPU) uint16 {
+			return c.DE
+		},
+		Set: func(c *CPU, v uint16) {
+			c.DE = v
+		},
+	},
+	HL: {
+		Get: func(c *CPU) uint16 {
+			return c.HL
+		},
+		Set: func(c *CPU, v uint16) {
+			c.HL = v
+		},
+	},
+	IR: {
+		Get: func(c *CPU) uint16 {
+			return c.IR
+		},
+		Set: func(c *CPU, v uint16) {
+			c.IR = v
+		},
+	},
+	IE: {
+		Get: func(c *CPU) uint16 {
+			return c.IE
+		},
+		Set: func(c *CPU, v uint16) {
+			c.IE = v
+		},
+	},
+	SP: {
+		Get: func(c *CPU) uint16 {
+			return c.SP
+		},
+		Set: func(c *CPU, v uint16) {
+			c.SP = v
+		},
+	},
+	PC: {
+		Get: func(c *CPU) uint16 {
+			return c.PC
+		},
+		Set: func(c *CPU, v uint16) {
+			c.PC = v
+		},
+	},
+}
+
+// Gets the appropiate register getter
+// and returns the value of the register.
+func (c *CPU) GetReg(r Register) uint16 {
+	return registerToAccessor[r].Get(c)
+}
+
+// Gets the appropiate register setter
+// and sets v into the register.
+func (c *CPU) SetReg(r Register, v uint16) {
+	registerToAccessor[r].Set(c, v)
+}
+
+// Prints the values of all registers
+// at the current CPU state.
+func (c CPU) PrintStatus() {
+	fmt.Printf("CPU Status:\n\n")
+	fmt.Printf("AF: 0x%X\n", c.AF)
+	fmt.Printf("BC: 0x%X\n", c.BC)
+	fmt.Printf("DE: 0x%X\n", c.DE)
+	fmt.Printf("HL: 0x%X\n", c.HL)
+	fmt.Printf("IR: 0x%X\n", c.IR)
+	fmt.Printf("IE: 0x%X\n", c.IE)
+	fmt.Printf("SP: 0x%X\n", c.SP)
+	fmt.Printf("PC: 0x%X\n", c.PC)
 }
