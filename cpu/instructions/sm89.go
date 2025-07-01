@@ -100,3 +100,21 @@ func LDDEa(emu emulator.Emulation) {
 	emu.RAM.SetByte(v, a)
 	emu.CPU.PC++
 }
+
+// LD A, (nn): Load accumulator (direct)
+//
+// Loads into A the memory data of the
+// address obtained from the next two
+// RAM values of the instruction.
+func LDAnn(emu emulator.Emulation) {
+	emu.CPU.PC++
+	nLo := emu.RAM.GetByte(emu.CPU.PC)
+	emu.CPU.PC++
+	nHi := emu.RAM.GetByte(emu.CPU.PC)
+
+	a := uint16(nHi)<<8 | uint16(nLo)
+	v := emu.RAM.GetByte(a)
+
+	emu.CPU.Set(cpu.A, v)
+	emu.CPU.PC++
+}
