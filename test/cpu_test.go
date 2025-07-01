@@ -7,8 +7,8 @@ import (
 	"github.com/markelmencia/gogb/cpu"
 )
 
-func getExampleCPU() cpu.CPU {
-	return cpu.CPU{
+func getExampleCPU() *cpu.CPU {
+	return &cpu.CPU{
 		AF: 0xFACE,
 		BC: 0xBEEF,
 		DE: 0xFEED,

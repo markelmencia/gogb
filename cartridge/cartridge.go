@@ -21,7 +21,7 @@ func GetCartridgeData(dir string) ([]byte, error) {
 // to print out specific information
 // about the cartridge header.
 func PrintHeaderData(cart []byte) error {
-	// Checks header size
+	// Checks cartridge size
 	if len(cart) < 0x150 {
 		return fmt.Errorf("Cartridge is too small (%d bytes - Min. size: 336 bytes)",
 			len(cart),
