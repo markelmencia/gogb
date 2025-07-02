@@ -302,3 +302,16 @@ func TestLDrrnn(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestLDnnSP(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetReg(cpu.SP, 0x9876)
+	instructions.LDnnSP(emu)
+	if emu.RAM.Get16Bit(0xFF93) != 0x9876 {
+		t.Fatal("Unexpected memory value")
+	}
+
+	if emu.CPU.PC != 3 {
+		t.Fatal("Unexpected PC value")
+	}
+}

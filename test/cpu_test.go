@@ -16,7 +16,7 @@ func getExampleCPU() *cpu.CPU {
 		IR: 0xACED,
 		IE: 0xDACE,
 		SP: 0xFADE,
-		PC: 0xDEED,
+		PC: 0x0000,
 	}
 }
 
