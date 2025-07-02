@@ -183,3 +183,32 @@ func TestRegSetter(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestFlags(t *testing.T) {
+	c := getExampleCPU()
+
+	if !c.IsFlag(cpu.FlagZ) {
+		t.Fatal("Unexpected value in Z")
+	}
+
+	if !c.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected value in N")
+	}
+
+	if c.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected value in H")
+	}
+
+	if c.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected value in C")
+	}
+
+	c.SetFlag(true, cpu.FlagZ)
+	c.SetFlag(false, cpu.FlagN)
+	c.SetFlag(true, cpu.FlagH)
+	c.SetFlag(false, cpu.FlagC)
+
+	if c.GetHalve(cpu.F) != 0xAE {
+		t.Fatal("Unexpected value in F")
+	}
+}
