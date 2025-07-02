@@ -344,3 +344,20 @@ func TestPUSHrr(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestPOPrr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.RAM.Set16Bit(0x4532, emu.CPU.GetReg(cpu.SP))
+	instructions.POPrr(cpu.HL, emu)
+	if emu.CPU.GetReg(cpu.HL) != 0x4532 {
+		t.Fatal("Unexpected register value in HL")
+	}
+
+	if emu.CPU.GetReg(cpu.SP) != 0xFAE0 {
+		t.Fatal("Unexpected register value in SP")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
