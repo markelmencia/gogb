@@ -10,6 +10,7 @@ const (
 
 type Halve byte
 type Register byte
+type Flag byte
 
 // Defines an enum for each halve register
 // in the CPU.
@@ -35,6 +36,14 @@ const (
 	IE
 	SP
 	PC
+)
+
+// Defines an enum with each flag
+const (
+	FlagZ Flag = iota
+	FlagN
+	FlagH
+	FlagC
 )
 
 // Represents a GB CPU.
@@ -239,6 +248,51 @@ var registerToAccessor = map[Register]RegisterAccessor{
 			c.PC = v
 		},
 	},
+}
+
+// Returns the appropiate mask
+// to obtain the corresponding
+// byte to the desired flag.
+var flagToMask = map[Flag]byte{
+	FlagZ: 0b10000000,
+	FlagN: 0b01000000,
+	FlagH: 0b00100000,
+	FlagC: 0b00010000,
+}
+
+// Flags
+
+// Obtains the bit that corresponds to flag f, and
+// returns true if it was set. If it wasn't, it returns
+// false.
+func (c *CPU) IsFlag(f Flag) bool {
+	mask := flagToMask[f]
+
+	// We mask the value of F so that all the bits in the register
+	// are set to 0 except the bit that corresponds to the flag
+	masked := c.GetHalve(F) & mask
+
+	// If masked is 0, it means that the flag bit was also 0
+	if masked == 0 {
+		return false
+	} else { // If masked is non-0, it means that the flag bit was 1
+		return true
+	}
+}
+
+// Sets the desired flag f to 1 if s is true
+// or 0 if s is false.
+func (c *CPU) SetFlag(s bool, f Flag) {
+	mask := flagToMask[f]
+	var v byte
+	if s {
+		// Sets the flag bit to 1 and leaves the rest untouched
+		v = c.GetHalve(F) | mask
+	} else {
+		// Sets the flag bit to 0 and leaves the rest untouched
+		v = c.GetHalve(F) & ^mask
+	}
+	c.SetHalve(F, v)
 }
 
 // Gets the appropiate register getter
