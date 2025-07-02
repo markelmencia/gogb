@@ -315,3 +315,15 @@ func TestLDnnSP(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestLDSPHL(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.LDSPHL(emu)
+	if emu.CPU.GetReg(cpu.SP) != emu.CPU.GetReg(cpu.HL) {
+		t.Fatal("Unexpected register value in SP")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}

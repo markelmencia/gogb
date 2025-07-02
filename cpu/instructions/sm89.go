@@ -259,3 +259,12 @@ func LDnnSP(emu emulator.Emulation) {
 	emu.RAM.Set16Bit(v, a)
 	emu.CPU.PC++
 }
+
+// LD SP, HL: Load stack pointer from HL
+//
+// Loads the value in HL into SP
+func LDSPHL(emu emulator.Emulation) {
+	v := emu.CPU.HL
+	emu.CPU.SP = v
+	emu.CPU.PC++
+}
