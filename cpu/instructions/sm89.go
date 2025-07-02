@@ -268,3 +268,16 @@ func LDSPHL(emu emulator.Emulation) {
 	emu.CPU.SP = v
 	emu.CPU.PC++
 }
+
+// PUSH rr: Push to stack
+//
+// Pushes the value of register rr to
+// the tack
+func PUSHrr(rr cpu.Register, emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.SP)
+	v := emu.CPU.GetReg(rr)
+	emu.CPU.SP--
+	emu.RAM.Set16Bit(v, a)
+	emu.CPU.SP--
+	emu.CPU.PC++
+}

@@ -327,3 +327,20 @@ func TestLDSPHL(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestPUSHrr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetReg(cpu.DE, 0x1289)
+	instructions.PUSHrr(cpu.DE, emu)
+	if emu.RAM.Get16Bit(0xFADE) != 0x1289 {
+		t.Fatal("Unexpected memory value")
+	}
+
+	if emu.CPU.GetReg(cpu.SP) != 0xFADC {
+		t.Fatal("Unexpected register value in SP")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
