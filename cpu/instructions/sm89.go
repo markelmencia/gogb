@@ -7,31 +7,35 @@ import (
 
 /* AUXILIARY FUNCTIONS */
 
-// Returns true if there is a carry
-// in bit 7 of the resulting value of a + b.
-func hasCarry(a, b byte) bool {
-	// To check the 7-th bit carry we can simply check if the result
-	// of the sum of these two values exceeds 0xFF (8-bit overflow).
-
+// Calculates a + b and returns it, along
+// with two boolean values that are true
+// if the 7th and 3rd bits have a carry
+// respectively, meaning:
+//
+// Returns:
+// (result, hasCarry, hasHalfCarry)
+//
+// This function is useful because it
+// calculates the sum of two bytes
+// along with their significant carries,
+// which are relevant due to flags C and H
+// of the CPU.
+func sum(a, b byte) (byte, bool, bool) {
+	// Calculates the result of the sum
 	// The casting to uint16 is necessary because if the sum of two
 	// bytes overflows it resets back to zero.
 	result := uint16(a) + uint16(b)
-	return result > 0xFF
-}
+	// To check the 7th bit carry we can simply check if the result
+	// of the sum of these two values exceeds 0xFF (8-bit overflow).
+	carry := result > 0xFF
 
-// Returns true if there is a carry
-// in bit 3 of the resulting value of a + b.
-func hasHalfCarry(a, b byte) bool {
-	// Masks the lower 4 bits of a and b
+	// To check the 3rd bit carry we have to mask the lower 4 bits of
+	// the operands and check if its sum exceeds 0xF (4-bit overflow).
 	lo4a := a & 0x0F
 	lo4b := b & 0x0F
+	halfCarry := lo4a+lo4b > 0x0F
 
-	// If the sum of lo4a + lo4b overflows
-	// in bit 3 (the number is bigger than 0xF),
-	// it means that there was a carry in bit 3.
-
-	result := lo4a + lo4b
-	return result > 0x0F
+	return byte(result), carry, halfCarry // result is casted back to byte
 }
 
 /* SM89 INSTRUCTIONS */
@@ -341,13 +345,19 @@ func LDHLSPpe(emu emulator.Emulation) {
 	// Gets the unsigned value of e
 	loe := byte(e)
 
+	// Calculates if there was a carry in the 7th and 3rd bit
+	_, hasCarry, hasHalfCarry := sum(loSP, loe)
+
 	// Sets the flag if it has a carry
-	emu.CPU.SetFlag(hasCarry(loSP, loe), cpu.FlagC)
+	emu.CPU.SetFlag(hasCarry, cpu.FlagC)
 	// Sets the flag if it has a half carry
-	emu.CPU.SetFlag(hasHalfCarry(loSP, loe), cpu.FlagH)
+	emu.CPU.SetFlag(hasHalfCarry, cpu.FlagH)
 	// The rest of the flags will never be set
 	emu.CPU.SetFlag(false, cpu.FlagZ)
 	emu.CPU.SetFlag(false, cpu.FlagN)
 
 	emu.CPU.PC++
 }
+	// v := emu.CPU.GetHalve(cpu.A) + emu.CPU.GetHalve(r)
+
+	emu.CPU.PC++
