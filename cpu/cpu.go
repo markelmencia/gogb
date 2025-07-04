@@ -1,6 +1,8 @@
 package cpu
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Masks that allow splitting combined registers.
 const (
@@ -311,6 +313,8 @@ func (c *CPU) SetReg(r Register, v uint16) {
 // at the current CPU state.
 func (c CPU) PrintStatus() {
 	fmt.Printf("CPU Status:\n\n")
+
+	fmt.Printf("Register values:\n")
 	fmt.Printf("AF: 0x%X\n", c.AF)
 	fmt.Printf("BC: 0x%X\n", c.BC)
 	fmt.Printf("DE: 0x%X\n", c.DE)
@@ -318,5 +322,11 @@ func (c CPU) PrintStatus() {
 	fmt.Printf("IR: 0x%X\n", c.IR)
 	fmt.Printf("IE: 0x%X\n", c.IE)
 	fmt.Printf("SP: 0x%X\n", c.SP)
-	fmt.Printf("PC: 0x%X\n", c.PC)
+	fmt.Printf("PC: 0x%X\n\n", c.PC)
+
+	fmt.Printf("Flags:\n")
+	fmt.Printf("Z: %t\n", c.IsFlag(FlagZ))
+	fmt.Printf("N: %t\n", c.IsFlag(FlagN))
+	fmt.Printf("H: %t\n", c.IsFlag(FlagH))
+	fmt.Printf("C: %t\n", c.IsFlag(FlagC))
 }
