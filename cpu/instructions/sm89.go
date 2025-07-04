@@ -5,33 +5,6 @@ import (
 	"github.com/markelmencia/gogb/emulator"
 )
 
-// Performs a bitwise sum of a + b,
-// and returns its result along with
-// a boolean array in which a value is
-// set if there was a carry in the bit
-func sum16(a, b uint16) (uint16, [16]bool) {
-	var carry [16]bool
-	c := 0 // Stores the carry of the iteration
-
-	for i := range 16 {
-		// Gets the current bit of each operand
-		bitA := int((a >> i) & 1)
-		bitB := int((b >> i) & 1)
-
-		// Performs bitwise sum
-		sum := bitA + bitB + c
-
-		if sum > 1 { // There is a carry
-			c = 1
-			carry[i] = true
-		} else { // No carry
-			c = 0
-		}
-	}
-
-	return a + b, carry
-}
-
 // LD r, r': Load register (register) (8-Bit)
 //
 // Loads the value of r' into r
