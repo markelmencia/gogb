@@ -5,9 +5,40 @@ import (
 	"github.com/markelmencia/gogb/emulator"
 )
 
+/* AUXILIARY FUNCTIONS */
+
+// Returns true if there is a carry
+// in bit 7 of the resulting value of a + b.
+func hasCarry(a, b byte) bool {
+	// To check the 7-th bit carry we can simply check if the result
+	// of the sum of these two values exceeds 0xFF (8-bit overflow).
+
+	// The casting to uint16 is necessary because if the sum of two
+	// bytes overflows it resets back to zero.
+	result := uint16(a) + uint16(b)
+	return result > 0xFF
+}
+
+// Returns true if there is a carry
+// in bit 3 of the resulting value of a + b.
+func hasHalfCarry(a, b byte) bool {
+	// Masks the lower 4 bits of a and b
+	lo4a := a & 0x0F
+	lo4b := b & 0x0F
+
+	// If the sum of lo4a + lo4b overflows
+	// in bit 3 (the number is bigger than 0xF),
+	// it means that there was a carry in bit 3.
+
+	result := lo4a + lo4b
+	return result > 0x0F
+}
+
+/* SM89 INSTRUCTIONS */
+
 // LD r, r': Load register (register) (8-Bit)
 //
-// Loads the value of r' into r
+// Loads the value of r' into r.
 func LDrr(dst, src cpu.Halve, emu emulator.Emulation) {
 	v := emu.CPU.GetHalve(src)
 	emu.CPU.SetHalve(dst, v)
@@ -305,29 +336,15 @@ func LDHLSPpe(emu emulator.Emulation) {
 
 	emu.CPU.SetReg(cpu.HL, uint16(v)) // And now we recast it to uint16
 
-	// In order to set flags H and C, we have to check if there have
-	// been carries in bit 3 and 7. A carry in these bits would mean
-	// that an overflow has happened for 4 bits or 8 bits respectively.
-
-	// First we get the 8-bit lower end of SP and e
+	// Gets the lower byte of SP
 	loSP := byte(emu.CPU.GetReg(cpu.SP) & cpu.LOW_MASK)
+	// Gets the unsigned value of e
 	loe := byte(e)
 
-	// To check the 7-th bit carry we can simply check if the result
-	// of the sum of these two values exceeds 0xFF (8-bit overflow).
-	// If so, we set flag C. The casting to uint16 is necessary
-	// because if the sum of two bytes overflows, it resets back
-	// to zero
-
-	emu.CPU.SetFlag(uint16(loSP)+uint16(loe) > 0xFF, cpu.FlagC)
-
-	// To set/reset flag H, we can do the same thing but masking only
-	// the first 4 bits, and check if the sum exceeds 0xF (4-bit overflow)
-	lo4SP := loSP & 0x0F
-	lo4e := loe & 0x0F
-
-	emu.CPU.SetFlag(lo4SP+lo4e > 0x0F, cpu.FlagH)
-
+	// Sets the flag if it has a carry
+	emu.CPU.SetFlag(hasCarry(loSP, loe), cpu.FlagC)
+	// Sets the flag if it has a half carry
+	emu.CPU.SetFlag(hasHalfCarry(loSP, loe), cpu.FlagH)
 	// The rest of the flags will never be set
 	emu.CPU.SetFlag(false, cpu.FlagZ)
 	emu.CPU.SetFlag(false, cpu.FlagN)
