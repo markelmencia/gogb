@@ -5,6 +5,33 @@ import (
 	"github.com/markelmencia/gogb/emulator"
 )
 
+// Performs a bitwise sum of a + b,
+// and returns its result along with
+// a boolean array in which a value is
+// set if there was a carry in the bit
+func sum16(a, b uint16) (uint16, [16]bool) {
+	var carry [16]bool
+	c := 0 // Stores the carry of the iteration
+
+	for i := range 16 {
+		// Gets the current bit of each operand
+		bitA := int((a >> i) & 1)
+		bitB := int((b >> i) & 1)
+
+		// Performs bitwise sum
+		sum := bitA + bitB + c
+
+		if sum > 1 { // There is a carry
+			c = 1
+			carry[i] = true
+		} else { // No carry
+			c = 0
+		}
+	}
+
+	return a + b, carry
+}
+
 // LD r, r': Load register (register) (8-Bit)
 //
 // Loads the value of r' into r
@@ -282,10 +309,55 @@ func PUSHrr(rr cpu.Register, emu emulator.Emulation) {
 	emu.CPU.PC++
 }
 
+// POP rr: Pop from stack
+//
+// Pops from the stack into rr
 func POPrr(rr cpu.Register, emu emulator.Emulation) {
 	a := emu.CPU.GetReg(cpu.SP)
 	v := emu.RAM.Get16Bit(a)
 	emu.CPU.SP += 2
 	emu.CPU.SetReg(rr, v)
+	emu.CPU.PC++
+}
+
+// LD HL, SP+e: Load HL from adjusted stack pointer
+//
+// Loads the sum of e (next value to the instruction in memory) and SP
+// into HL.
+func LDHLSPpe(emu emulator.Emulation) {
+	emu.CPU.PC++
+	e := int8(emu.RAM.GetByte(emu.CPU.PC)) // casted so its signed
+	// Here we cast into int 32 to respect e's signed value
+	v := int32(emu.CPU.GetReg(cpu.SP)) + int32(e)
+
+	emu.CPU.SetReg(cpu.HL, uint16(v)) // And now we recast it to uint16
+
+	// In order to set flags H and C, we have to check if there have
+	// been carries in bit 3 and 7. A carry in these bits would mean
+	// that an overflow has happened for 4 bits or 8 bits respectively.
+
+	// First we get the 8-bit lower end of SP and e
+	loSP := byte(emu.CPU.GetReg(cpu.SP) & cpu.LOW_MASK)
+	loe := byte(e)
+
+	// To check the 7-th bit carry we can simply check if the result
+	// of the sum of these two values exceeds 0xFF (8-bit overflow).
+	// If so, we set flag C. The casting to uint16 is necessary
+	// because if the sum of two bytes overflows, it resets back
+	// to zero
+
+	emu.CPU.SetFlag(uint16(loSP)+uint16(loe) > 0xFF, cpu.FlagC)
+
+	// To set/reset flag H, we can do the same thing but masking only
+	// the first 4 bits, and check if the sum exceeds 0xF (4-bit overflow)
+	lo4SP := loSP & 0x0F
+	lo4e := loe & 0x0F
+
+	emu.CPU.SetFlag(lo4SP+lo4e > 0x0F, cpu.FlagH)
+
+	// The rest of the flags will never be set
+	emu.CPU.SetFlag(false, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+
 	emu.CPU.PC++
 }

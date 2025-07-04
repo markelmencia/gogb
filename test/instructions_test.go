@@ -361,3 +361,29 @@ func TestPOPrr(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestLDHLSPpe(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.RAM.SetByte(0xFE, 0x0001) // -2
+	instructions.LDHLSPpe(emu)
+
+	if emu.CPU.GetReg(cpu.HL) != 0xFADC {
+		t.Fatal("Unexpected register value in HL")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag value in H")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag value in C")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagZ) || emu.CPU.IsFlag((cpu.FlagN)) {
+		t.Fatal("Unexpected flag value in Z or N")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
