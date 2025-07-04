@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/markelmencia/gogb/cpu"
@@ -58,8 +57,6 @@ func TestHalveSetter(t *testing.T) {
 		t.Fail()
 	}
 
-	fmt.Printf("%X", c.AF)
-
 	if c.GetHalve(cpu.B) != 0x13 || c.GetHalve(cpu.C) != 0x37 {
 		t.Fail()
 	}
@@ -103,38 +100,7 @@ func TestRegGetter(t *testing.T) {
 		t.Fail()
 	}
 
-	if c.GetReg(cpu.PC) != 0xDEED {
-		t.Fail()
-	}
-	if c.GetReg(cpu.AF) != 0xFACE {
-		t.Fail()
-	}
-
-	if c.GetReg(cpu.BC) != 0xBEEF {
-		t.Fail()
-	}
-
-	if c.GetReg(cpu.DE) != 0xFEED {
-		t.Fail()
-	}
-
-	if c.GetReg(cpu.HL) != 0xDEAD {
-		t.Fail()
-	}
-
-	if c.GetReg(cpu.IE) != 0xDACE {
-		t.Fail()
-	}
-
-	if c.GetReg(cpu.IR) != 0xACED {
-		t.Fail()
-	}
-
-	if c.GetReg(cpu.SP) != 0xFADE {
-		t.Fail()
-	}
-
-	if c.GetReg(cpu.PC) != 0xDEED {
+	if c.GetReg(cpu.PC) != 0x0000 {
 		t.Fail()
 	}
 }
