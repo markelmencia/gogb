@@ -434,3 +434,27 @@ func TestADDHL(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestADDn(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.RAM[1] = 0xAD
+	vA := emu.CPU.GetHalve(cpu.A)
+
+	instructions.ADDn(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != vA+0xAD {
+		t.Fatal("Unexpected register value in A")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag value in C")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag value in H")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
