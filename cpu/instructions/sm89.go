@@ -548,3 +548,21 @@ func SUBHL(emu emulator.Emulation) {
 
 	emu.CPU.PC++
 }
+
+// SUB (n): Subtract (immediate)
+//
+// Loads into register A the value of A - the value in
+// memory next to the instruction
+func SUBn(emu emulator.Emulation) {
+	emu.CPU.PC++
+	a := emu.CPU.GetReg(cpu.PC)
+	v, carry, halfCarry := sub(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(true, cpu.FlagN)
+	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+
+	emu.CPU.PC++
+}

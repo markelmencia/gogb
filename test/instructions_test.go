@@ -564,7 +564,7 @@ func TestSUBHL(t *testing.T) {
 	emu := getExampleEmulation()
 	emu.RAM.SetByte(0xFE, 0xDEAD)
 	a := emu.CPU.GetHalve(cpu.A)
-	instructions.SUBr(cpu.Halve(cpu.D), emu)
+	instructions.SUBHL(emu)
 
 	if emu.CPU.GetHalve(cpu.A) != a-0xFE {
 		t.Fatal("Unexpected register value in A")
@@ -579,6 +579,29 @@ func TestSUBHL(t *testing.T) {
 	}
 
 	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestSUBn(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.RAM.SetByte(0xFE, 0x0001)
+	a := emu.CPU.GetHalve(cpu.A)
+	instructions.SUBn(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != a-0xFE {
+		t.Fatal("Unexpected register value in A")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag value in C")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag value in H")
+	}
+
+	if emu.CPU.PC != 2 {
 		t.Fatal("Unexpected PC value")
 	}
 }
