@@ -531,3 +531,20 @@ func SUBr(r cpu.Halve, emu emulator.Emulation) {
 
 	emu.CPU.PC++
 }
+
+// SUB (HL): Subtract (indirect HL)
+//
+// Loads into register A the value of A - the value in
+// memory in address HL
+func SUBHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v, carry, halfCarry := sub(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(true, cpu.FlagN)
+	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+
+	emu.CPU.PC++
+}
