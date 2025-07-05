@@ -409,3 +409,30 @@ func ADDn(emu emulator.Emulation) {
 
 	emu.CPU.PC++
 }
+
+// ADC r: Add with carry (register)
+//
+// Loads into register A the value of A + the value of
+// register r + the carry flag
+func ADCr(r cpu.Halve, emu emulator.Emulation) {
+	var f byte = 0
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		f = 1
+	}
+
+	// First we compute the register sum, then we add 1 if the C flag
+	// was set
+	v1, hasC1, hasH1 := sum(emu.CPU.GetHalve(cpu.A), (emu.CPU.GetHalve(r)))
+	v2, hasC2, hasH2 := sum(v1, f)
+
+	emu.CPU.SetHalve(cpu.A, v2)
+
+	emu.CPU.SetFlag(v2 == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	// Since two operations were performed, we must set the carry
+	// flags if a respective carry happened in any of them
+	emu.CPU.SetFlag(hasC1 || hasC2, cpu.FlagC)
+	emu.CPU.SetFlag(hasH1 || hasH2, cpu.FlagH)
+
+	emu.CPU.PC++
+}
