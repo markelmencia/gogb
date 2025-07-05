@@ -42,9 +42,13 @@ const (
 
 // Defines an enum with each flag
 const (
+	// Set when the value of an operation is 0
 	FlagZ Flag = iota
+	// Set when the operation performed is a subtraction
 	FlagN
+	// Set when there is a carry in bit 3 after an operation
 	FlagH
+	// Set when there is a carry in bit 7 after an operation
 	FlagC
 )
 
