@@ -374,3 +374,20 @@ func ADDr(r cpu.Halve, emu emulator.Emulation) {
 
 	emu.CPU.PC++
 }
+
+// ADD HL: Add (indirect HL)
+//
+// Loads into register A the value of A + the value of
+// in memory in address HL
+func ADDHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v, hasC, hasH := sum(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(hasC, cpu.FlagC)
+	emu.CPU.SetFlag(hasH, cpu.FlagH)
+
+	emu.CPU.PC++
+}
