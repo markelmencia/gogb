@@ -512,3 +512,30 @@ func TestADCHL(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestADCn(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetFlag(true, cpu.FlagC)
+	emu.RAM[0x01] = 0xAD
+	vA := emu.CPU.GetHalve(cpu.A)
+
+	instructions.ADCn(emu)
+
+	emu.CPU.PrintStatus()
+
+	if emu.CPU.GetHalve(cpu.A) != vA+0xAE {
+		t.Fatal("Unexpected register value in A")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag value in C")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag value in H")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
