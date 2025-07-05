@@ -387,3 +387,26 @@ func TestLDHLSPpe(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestADDr(t *testing.T) {
+	emu := getExampleEmulation()
+	a := emu.CPU.GetHalve(cpu.A)
+
+	instructions.ADDr(cpu.L, emu)
+
+	if emu.CPU.GetHalve(cpu.A) != a+emu.CPU.GetHalve(cpu.L) {
+		t.Fatal("Unexpected register value in A")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag value in C")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag value in H")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}

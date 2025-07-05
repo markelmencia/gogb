@@ -358,6 +358,19 @@ func LDHLSPpe(emu emulator.Emulation) {
 
 	emu.CPU.PC++
 }
-	// v := emu.CPU.GetHalve(cpu.A) + emu.CPU.GetHalve(r)
+
+// ADD r: Add (register)
+//
+// Loads into register A the value of A + the value of
+// the specified register (r)
+func ADDr(r cpu.Halve, emu emulator.Emulation) {
+	v, hasC, hasH := sum(emu.CPU.GetHalve(cpu.A), emu.CPU.GetHalve(r))
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(hasC, cpu.FlagC)
+	emu.CPU.SetFlag(hasH, cpu.FlagH)
 
 	emu.CPU.PC++
+}
