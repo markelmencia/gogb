@@ -566,3 +566,30 @@ func SUBn(emu emulator.Emulation) {
 
 	emu.CPU.PC++
 }
+
+// SBC r: Subtract with carry (register)
+//
+// Loads into register A the value of A - the value in
+// register r - flag C
+func SBCr(r cpu.Halve, emu emulator.Emulation) {
+	var f byte = 0
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		f = 1
+	}
+
+	// First we compute the register sum, then we add 1 if the C flag
+	// was set
+	v1, hasC1, hasH1 := sub(emu.CPU.GetHalve(cpu.A), emu.CPU.GetHalve(r))
+	v2, hasC2, hasH2 := sub(v1, f)
+
+	emu.CPU.SetHalve(cpu.A, v2)
+
+	emu.CPU.SetFlag(v2 == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(true, cpu.FlagN)
+	// Since two operations were performed, we must set the carry
+	// flags if a respective carry happened in any of them
+	emu.CPU.SetFlag(hasC1 || hasC2, cpu.FlagC)
+	emu.CPU.SetFlag(hasH1 || hasH2, cpu.FlagH)
+
+	emu.CPU.PC++
+}

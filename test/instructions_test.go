@@ -605,3 +605,27 @@ func TestSUBn(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestSBCr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetFlag(true, cpu.FlagC)
+	emu.CPU.SetHalve(cpu.E, 0xFE)
+	a := emu.CPU.GetHalve(cpu.A)
+	instructions.SBCr(cpu.E, emu)
+
+	if emu.CPU.GetHalve(cpu.A) != a-0xFE-1 {
+		t.Fatal("Unexpected register value in A")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag value in C")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag value in H")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
