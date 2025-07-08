@@ -677,3 +677,57 @@ func TestSBCn(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestCPr(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.CPr(cpu.Halve(cpu.D), emu)
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag value in C")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag value in H")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestCPHL(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.RAM.SetByte(0xFE, 0xDEAD)
+	instructions.CPHL(emu)
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag value in C")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag value in H")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestCPn(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.RAM.SetByte(0xFE, 0x0001)
+
+	instructions.CPn(emu)
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag value in C")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag value in H")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}

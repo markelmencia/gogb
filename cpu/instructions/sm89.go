@@ -549,7 +549,7 @@ func SUBHL(emu emulator.Emulation) {
 	emu.CPU.PC++
 }
 
-// SUB (n): Subtract (immediate)
+// SUB n: Subtract (immediate)
 //
 // Loads into register A the value of A - the value in
 // memory next to the instruction
@@ -625,8 +625,8 @@ func SBCHL(emu emulator.Emulation) {
 
 // SBC n: Subtract with carry (immediate)
 //
-// Loads into register A the value of A - the memory value
-// in address HL - flag C
+// Loads into register A the value of A - the memory value next to
+// the instruction - flag C.
 func SBCn(emu emulator.Emulation) {
 	var f byte = 0
 	if emu.CPU.IsFlag(cpu.FlagC) {
@@ -649,6 +649,60 @@ func SBCn(emu emulator.Emulation) {
 	// flags if a respective carry happened in any of them
 	emu.CPU.SetFlag(hasC1 || hasC2, cpu.FlagC)
 	emu.CPU.SetFlag(hasH1 || hasH2, cpu.FlagH)
+
+	emu.CPU.PC++
+}
+
+// CP r: Compare (register)
+//
+// Compares A with the value in register R, and
+// updates the flags accordingly.
+//
+// Identical to SUBr, bit without modifying A.
+func CPr(r cpu.Halve, emu emulator.Emulation) {
+	v, carry, halfCarry := sub(emu.CPU.GetHalve(cpu.A), emu.CPU.GetHalve(r))
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(true, cpu.FlagN)
+	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+
+	emu.CPU.PC++
+}
+
+// CP (HL): Compare (indirect HL)
+//
+// Compares A with the value in memory in address HL, and
+// updates the flags accordingly.
+//
+// Identical to SUBHL, bit without modifying A.
+func CPHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v, carry, halfCarry := sub(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(true, cpu.FlagN)
+	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+
+	emu.CPU.PC++
+}
+
+// CP n: Compare (immediate)
+//
+// Compares A with the value in memory next to
+// the instruction, and updates the flags accordingly.
+//
+// Identical to SUBn, bit without modifying A.
+func CPn(emu emulator.Emulation) {
+	emu.CPU.PC++
+	a := emu.CPU.GetReg(cpu.PC)
+	v, carry, halfCarry := sub(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(true, cpu.FlagN)
+	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
 
 	emu.CPU.PC++
 }
