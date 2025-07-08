@@ -622,3 +622,33 @@ func SBCHL(emu emulator.Emulation) {
 
 	emu.CPU.PC++
 }
+
+// SBC n: Subtract with carry (immediate)
+//
+// Loads into register A the value of A - the memory value
+// in address HL - flag C
+func SBCn(emu emulator.Emulation) {
+	var f byte = 0
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		f = 1
+	}
+
+	emu.CPU.PC++
+	a := emu.CPU.GetReg(cpu.PC)
+
+	// First we compute the register sum, then we add 1 if the C flag
+	// was set
+	v1, hasC1, hasH1 := sub(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+	v2, hasC2, hasH2 := sub(v1, f)
+
+	emu.CPU.SetHalve(cpu.A, v2)
+
+	emu.CPU.SetFlag(v2 == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(true, cpu.FlagN)
+	// Since two operations were performed, we must set the carry
+	// flags if a respective carry happened in any of them
+	emu.CPU.SetFlag(hasC1 || hasC2, cpu.FlagC)
+	emu.CPU.SetFlag(hasH1 || hasH2, cpu.FlagH)
+
+	emu.CPU.PC++
+}
