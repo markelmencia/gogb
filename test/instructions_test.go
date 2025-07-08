@@ -756,3 +756,32 @@ func TestINCHL(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestDECr(t *testing.T) {
+	emu := getExampleEmulation()
+	a := emu.CPU.GetHalve(cpu.A)
+	instructions.DECr(cpu.A, emu)
+
+	if emu.CPU.GetHalve(cpu.A) != a-1 {
+		t.Fatal("Unexpected value in register a")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestDECHL(t *testing.T) {
+	emu := getExampleEmulation()
+	a := emu.CPU.GetReg(cpu.HL)
+	vA := emu.RAM.GetByte(a)
+	instructions.DECHL(emu)
+
+	if emu.RAM.GetByte(a) != vA-1 {
+		t.Fatal("Unexpected value in memory")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}

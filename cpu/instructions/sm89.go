@@ -735,3 +735,32 @@ func INCHL(emu emulator.Emulation) {
 	emu.CPU.SetFlag(carry, cpu.FlagC)
 	emu.CPU.PC++
 }
+
+// DEC r: Increment (register)
+//
+// Decrements by 1 the value of register r.
+func DECr(r cpu.Halve, emu emulator.Emulation) {
+	v, carry, halfCarry := sub(emu.CPU.GetHalve(r), 1)
+	emu.CPU.SetHalve(r, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(true, cpu.FlagN)
+	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// DEC (HL): Increment (indirect HL)
+//
+// Decrements by 1 the value in memory in address HL.
+func DECHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v, carry, halfCarry := sub(emu.RAM.GetByte(a), 1)
+	emu.RAM.SetByte(v, a)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(true, cpu.FlagN)
+	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+	emu.CPU.PC++
+}
