@@ -467,8 +467,6 @@ func TestADCr(t *testing.T) {
 
 	instructions.ADCr(cpu.B, emu)
 
-	emu.CPU.PrintStatus()
-
 	if emu.CPU.GetHalve(cpu.A) != vA+0xAE {
 		t.Fatal("Unexpected register value in A")
 	}
@@ -493,8 +491,6 @@ func TestADCHL(t *testing.T) {
 	vA := emu.CPU.GetHalve(cpu.A)
 
 	instructions.ADCHL(emu)
-
-	emu.CPU.PrintStatus()
 
 	if emu.CPU.GetHalve(cpu.A) != vA+0xAE {
 		t.Fatal("Unexpected register value in A")
@@ -728,6 +724,35 @@ func TestCPn(t *testing.T) {
 	}
 
 	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestINCr(t *testing.T) {
+	emu := getExampleEmulation()
+	a := emu.CPU.GetHalve(cpu.A)
+	instructions.INCr(cpu.A, emu)
+
+	if emu.CPU.GetHalve(cpu.A) != a+1 {
+		t.Fatal("Unexpected value in register a")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestINCHL(t *testing.T) {
+	emu := getExampleEmulation()
+	a := emu.CPU.GetReg(cpu.HL)
+	vA := emu.RAM.GetByte(a)
+	instructions.INCHL(emu)
+
+	if emu.RAM.GetByte(a) != vA+1 {
+		t.Fatal("Unexpected value in memory")
+	}
+
+	if emu.CPU.PC != 1 {
 		t.Fatal("Unexpected PC value")
 	}
 }
