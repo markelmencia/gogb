@@ -823,3 +823,55 @@ func ANDn(emu emulator.Emulation) {
 	emu.CPU.SetFlag(false, cpu.FlagC)
 	emu.CPU.PC++
 }
+
+// OR r: Bitwise OR (register)
+//
+// Sets in register A the value of an OR operation
+// between register A and r.
+func ORr(r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r) | emu.CPU.GetHalve(cpu.A)
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.SetFlag(false, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// OR (HL): Bitwise OR (indirect HL)
+//
+// Sets in register A the value of an OR operation
+// between register A and the value in memory in
+// address HL.
+func ORHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+
+	v := emu.RAM.GetByte(a) | emu.CPU.GetHalve(cpu.A)
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.SetFlag(false, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// OR n: Bitwise OR (immediate)
+//
+// Sets in register A the value of an OR operation
+// between register A and the value in memory in
+// the address next to the instruction..
+func ORn(emu emulator.Emulation) {
+	emu.CPU.PC++
+	a := emu.CPU.GetReg(cpu.PC)
+
+	v := emu.RAM.GetByte(a) | emu.CPU.GetHalve(cpu.A)
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.SetFlag(false, cpu.FlagC)
+	emu.CPU.PC++
+}
