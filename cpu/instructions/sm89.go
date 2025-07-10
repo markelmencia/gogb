@@ -875,3 +875,55 @@ func ORn(emu emulator.Emulation) {
 	emu.CPU.SetFlag(false, cpu.FlagC)
 	emu.CPU.PC++
 }
+
+// XOR r: Bitwise XOR (register)
+//
+// Sets in register A the value of an XOR operation
+// between register A and r.
+func XORr(r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r) ^ emu.CPU.GetHalve(cpu.A)
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.SetFlag(false, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// XOR (HL): Bitwise XOR (indirect HL)
+//
+// Sets in register A the value of an XOR operation
+// between register A and the value in memory in
+// address HL.
+func XORHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+
+	v := emu.RAM.GetByte(a) ^ emu.CPU.GetHalve(cpu.A)
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.SetFlag(false, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// XOR n: Bitwise XOR (immediate)
+//
+// Sets in register A the value of an XOR operation
+// between register A and the value in memory in
+// the address next to the instruction..
+func XORn(emu emulator.Emulation) {
+	emu.CPU.PC++
+	a := emu.CPU.GetReg(cpu.PC)
+
+	v := emu.RAM.GetByte(a) ^ emu.CPU.GetHalve(cpu.A)
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.SetFlag(false, cpu.FlagC)
+	emu.CPU.PC++
+}

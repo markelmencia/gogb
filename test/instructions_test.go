@@ -938,10 +938,101 @@ func TestORHL(t *testing.T) {
 	}
 }
 
+func TestXORNn(t *testing.T) {
+	emu := getExampleEmulation()
+	a := emu.CPU.GetHalve(cpu.A)
+	instructions.XORn(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != a^0x93 {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagZ) {
+		t.Fatal("Unexpected value in flag Z")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected value in flag N")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected value in flag H")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected value in flag C")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestXORr(t *testing.T) {
+	emu := getExampleEmulation()
+	a := emu.CPU.GetHalve(cpu.A)
+	instructions.XORr(cpu.B, emu)
+
+	if emu.CPU.GetHalve(cpu.A) != a^emu.CPU.GetHalve(cpu.B) {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagZ) {
+		t.Fatal("Unexpected value in flag Z")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected value in flag N")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected value in flag H")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected value in flag C")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestXORHL(t *testing.T) {
+	emu := getExampleEmulation()
+	a := emu.CPU.GetReg(cpu.HL)
+	aV := emu.CPU.GetHalve(cpu.A)
+	instructions.XORHL(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != aV^emu.RAM.GetByte(a) {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagZ) {
+		t.Fatal("Unexpected value in flag Z")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected value in flag N")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected value in flag H")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected value in flag C")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
 func TestORNn(t *testing.T) {
 	emu := getExampleEmulation()
 	a := emu.CPU.GetHalve(cpu.A)
-	instructions.ORn(emu)
+	instructions.XORn(emu)
 
 	if emu.CPU.GetHalve(cpu.A) != a|0x93 {
 		t.Fatal("Unexpected value in register A")
