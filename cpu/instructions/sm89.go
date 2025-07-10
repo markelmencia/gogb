@@ -780,7 +780,7 @@ func ANDr(r cpu.Halve, emu emulator.Emulation) {
 	emu.CPU.PC++
 }
 
-// AND HL: Bitwise AND (indirect HL)
+// AND (HL): Bitwise AND (indirect HL)
 //
 // Sets in register A the value of an AND operation
 // between register A and the value in memory in
@@ -790,6 +790,29 @@ func ANDHL(emu emulator.Emulation) {
 	// the flag H is always set in AND operations.
 	// I have not found the reason as to why this is done.
 	a := emu.CPU.GetReg(cpu.HL)
+
+	v := emu.RAM.GetByte(a) & emu.CPU.GetHalve(cpu.A)
+	emu.CPU.SetHalve(cpu.A, v)
+
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(true, cpu.FlagH)
+	emu.CPU.SetFlag(false, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// AND n: Bitwise AND (immediate)
+//
+// Sets in register A the value of an AND operation
+// between register A and the value in memory in
+// the address next to the instruction..
+func ANDn(emu emulator.Emulation) {
+	// NOTE: According to Game Boy references,
+	// the flag H is always set in AND operations.
+	// I have not found the reason as to why this is done.
+
+	emu.CPU.PC++
+	a := emu.CPU.GetReg(cpu.PC)
 
 	v := emu.RAM.GetByte(a) & emu.CPU.GetHalve(cpu.A)
 	emu.CPU.SetHalve(cpu.A, v)

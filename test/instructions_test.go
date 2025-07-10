@@ -846,3 +846,33 @@ func TestANDHL(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestANDn(t *testing.T) {
+	emu := getExampleEmulation()
+	a := emu.CPU.GetHalve(cpu.A)
+	instructions.ANDn(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != a&0x93 {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagZ) {
+		t.Fatal("Unexpected value in flag Z")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected value in flag N")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected value in flag H")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected value in flag C")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
