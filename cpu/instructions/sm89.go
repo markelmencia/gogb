@@ -913,7 +913,7 @@ func XORHL(emu emulator.Emulation) {
 //
 // Sets in register A the value of an XOR operation
 // between register A and the value in memory in
-// the address next to the instruction..
+// the address next to the instruction.
 func XORn(emu emulator.Emulation) {
 	emu.CPU.PC++
 	a := emu.CPU.GetReg(cpu.PC)
@@ -925,5 +925,16 @@ func XORn(emu emulator.Emulation) {
 	emu.CPU.SetFlag(false, cpu.FlagN)
 	emu.CPU.SetFlag(false, cpu.FlagH)
 	emu.CPU.SetFlag(false, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// CCF: Complement carry flag
+//
+// Flips the value of the carry flag
+// and clears N and H.
+func CCF(emu emulator.Emulation) {
+	emu.CPU.SetFlag(emu.CPU.IsFlag(cpu.FlagC), cpu.FlagC)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(false, cpu.FlagH)
 	emu.CPU.PC++
 }

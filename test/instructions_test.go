@@ -1058,3 +1058,25 @@ func TestORNn(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestCCF(t *testing.T) {
+	emu := getExampleEmulation()
+	c := emu.CPU.IsFlag(cpu.FlagC)
+	instructions.CCF(emu)
+
+	if emu.CPU.IsFlag(cpu.FlagC) == !c {
+		t.Fatal("Unexpected value in flag C")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected value in flag Z")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected value in flag N")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
