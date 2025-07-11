@@ -938,3 +938,13 @@ func CCF(emu emulator.Emulation) {
 	emu.CPU.SetFlag(false, cpu.FlagH)
 	emu.CPU.PC++
 }
+
+// SCF: Complement carry flag
+//
+//	Set the carry flag and clears N and H.
+func SCF(emu emulator.Emulation) {
+	emu.CPU.SetFlag(true, cpu.FlagC)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.PC++
+}

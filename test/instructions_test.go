@@ -1080,3 +1080,24 @@ func TestCCF(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestSCF(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.SCF(emu)
+
+	if emu.CPU.IsFlag(cpu.FlagC) != true {
+		t.Fatal("Unexpected value in flag C")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected value in flag Z")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected value in flag N")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
