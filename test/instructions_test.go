@@ -1200,3 +1200,61 @@ func TestDECrr(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestADDHLrr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetReg(cpu.DE, 0xEAEA)
+	emu.CPU.SetReg(cpu.HL, 0x2601)
+
+	instructions.ADDHLrr(cpu.DE, emu)
+
+	emu.CPU.PrintStatus()
+
+	if emu.CPU.GetReg(cpu.HL) != 0x10EB {
+		t.Fatal("Unexpected value in register HL")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag H value")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestADDSPpe(t *testing.T) {
+	emu := getExampleEmulation()
+	sp := emu.CPU.GetReg(cpu.SP)
+	emu.RAM.SetByte(0x32, 0x0001)
+
+	instructions.ADDSPpe(emu)
+
+	if emu.CPU.GetReg(cpu.SP) != sp+0x32 {
+		t.Fatal("Unexpected value in register SP")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagZ) {
+		t.Fatal("Unexpected flag Z value")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected flag N value")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag H value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}

@@ -25,7 +25,7 @@ func add8(a, b byte) (byte, bool, bool) {
 	// The casting to uint16 is necessary because if the sum of two
 	// bytes overflows it warps around to zero.
 	result := uint16(a) + uint16(b)
-	// To check the 7th bit carry we can simply check if the result
+	// To check the 7th bit  we can simply check if the result
 	// of the sum of these two values exceeds 0xFF (8-bit overflow).
 	carry := result > 0xFF
 
@@ -419,12 +419,12 @@ func LDHLSPpe(emu emulator.Emulation) {
 	loe := byte(e)
 
 	// Calculates if there was a carry in the 7th and 3rd bit
-	_, hasCarry, hasHalfCarry := add8(loSP, loe)
+	_, carry, hCarry := add8(loSP, loe)
 
 	// Sets the flag if it has a carry
-	emu.CPU.SetFlag(hasCarry, cpu.FlagC)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
 	// Sets the flag if it has a half carry
-	emu.CPU.SetFlag(hasHalfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	// The rest of the flags will never be set
 	emu.CPU.SetFlag(false, cpu.FlagZ)
 	emu.CPU.SetFlag(false, cpu.FlagN)
@@ -437,13 +437,13 @@ func LDHLSPpe(emu emulator.Emulation) {
 // Loads into register A the value of A + the value of
 // the specified register (r).
 func ADDr(r cpu.Halve, emu emulator.Emulation) {
-	v, hasC, hasH := add8(emu.CPU.GetHalve(cpu.A), emu.CPU.GetHalve(r))
+	v, carry, hCarry := add8(emu.CPU.GetHalve(cpu.A), emu.CPU.GetHalve(r))
 	emu.CPU.SetHalve(cpu.A, v)
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(false, cpu.FlagN)
-	emu.CPU.SetFlag(hasC, cpu.FlagC)
-	emu.CPU.SetFlag(hasH, cpu.FlagH)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 
 	emu.CPU.PC++
 }
@@ -454,13 +454,13 @@ func ADDr(r cpu.Halve, emu emulator.Emulation) {
 // in memory in address HL.
 func ADDHL(emu emulator.Emulation) {
 	a := emu.CPU.GetReg(cpu.HL)
-	v, hasC, hasH := add8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+	v, carry, hCarry := add8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
 	emu.CPU.SetHalve(cpu.A, v)
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(false, cpu.FlagN)
-	emu.CPU.SetFlag(hasC, cpu.FlagC)
-	emu.CPU.SetFlag(hasH, cpu.FlagH)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 
 	emu.CPU.PC++
 }
@@ -472,13 +472,13 @@ func ADDHL(emu emulator.Emulation) {
 func ADDn(emu emulator.Emulation) {
 	emu.CPU.PC++
 	a := emu.CPU.PC
-	v, hasC, hasH := add8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+	v, carry, hCarry := add8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
 	emu.CPU.SetHalve(cpu.A, v)
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(false, cpu.FlagN)
-	emu.CPU.SetFlag(hasC, cpu.FlagC)
-	emu.CPU.SetFlag(hasH, cpu.FlagH)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 
 	emu.CPU.PC++
 }
@@ -572,12 +572,12 @@ func ADCn(emu emulator.Emulation) {
 // Loads into register A the value of A - the value in
 // register r.
 func SUBr(r cpu.Halve, emu emulator.Emulation) {
-	v, carry, halfCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.CPU.GetHalve(r))
+	v, carry, hCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.CPU.GetHalve(r))
 	emu.CPU.SetHalve(cpu.A, v)
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(true, cpu.FlagN)
-	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	emu.CPU.SetFlag(carry, cpu.FlagC)
 
 	emu.CPU.PC++
@@ -589,12 +589,12 @@ func SUBr(r cpu.Halve, emu emulator.Emulation) {
 // memory in address HL
 func SUBHL(emu emulator.Emulation) {
 	a := emu.CPU.GetReg(cpu.HL)
-	v, carry, halfCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+	v, carry, hCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
 	emu.CPU.SetHalve(cpu.A, v)
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(true, cpu.FlagN)
-	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	emu.CPU.SetFlag(carry, cpu.FlagC)
 
 	emu.CPU.PC++
@@ -607,12 +607,12 @@ func SUBHL(emu emulator.Emulation) {
 func SUBn(emu emulator.Emulation) {
 	emu.CPU.PC++
 	a := emu.CPU.GetReg(cpu.PC)
-	v, carry, halfCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+	v, carry, hCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
 	emu.CPU.SetHalve(cpu.A, v)
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(true, cpu.FlagN)
-	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	emu.CPU.SetFlag(carry, cpu.FlagC)
 
 	emu.CPU.PC++
@@ -711,11 +711,11 @@ func SBCn(emu emulator.Emulation) {
 //
 // Identical to SUBr, bit without modifying A.
 func CPr(r cpu.Halve, emu emulator.Emulation) {
-	v, carry, halfCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.CPU.GetHalve(r))
+	v, carry, hCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.CPU.GetHalve(r))
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(true, cpu.FlagN)
-	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	emu.CPU.SetFlag(carry, cpu.FlagC)
 
 	emu.CPU.PC++
@@ -729,11 +729,11 @@ func CPr(r cpu.Halve, emu emulator.Emulation) {
 // Identical to SUBHL, bit without modifying A.
 func CPHL(emu emulator.Emulation) {
 	a := emu.CPU.GetReg(cpu.HL)
-	v, carry, halfCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+	v, carry, hCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(true, cpu.FlagN)
-	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	emu.CPU.SetFlag(carry, cpu.FlagC)
 
 	emu.CPU.PC++
@@ -748,11 +748,11 @@ func CPHL(emu emulator.Emulation) {
 func CPn(emu emulator.Emulation) {
 	emu.CPU.PC++
 	a := emu.CPU.GetReg(cpu.PC)
-	v, carry, halfCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
+	v, carry, hCarry := sub8(emu.CPU.GetHalve(cpu.A), emu.RAM.GetByte(a))
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(true, cpu.FlagN)
-	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	emu.CPU.SetFlag(carry, cpu.FlagC)
 
 	emu.CPU.PC++
@@ -762,12 +762,12 @@ func CPn(emu emulator.Emulation) {
 //
 // Increments by 1 the value of register r.
 func INCr(r cpu.Halve, emu emulator.Emulation) {
-	v, _, halfCarry := add8(emu.CPU.GetHalve(r), 1)
+	v, _, hCarry := add8(emu.CPU.GetHalve(r), 1)
 	emu.CPU.SetHalve(r, v)
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(false, cpu.FlagN)
-	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	emu.CPU.PC++
 }
 
@@ -776,12 +776,12 @@ func INCr(r cpu.Halve, emu emulator.Emulation) {
 // Increments by 1 the value in memory in address HL.
 func INCHL(emu emulator.Emulation) {
 	a := emu.CPU.GetReg(cpu.HL)
-	v, _, halfCarry := add8(emu.RAM.GetByte(a), 1)
+	v, _, hCarry := add8(emu.RAM.GetByte(a), 1)
 	emu.RAM.SetByte(v, a)
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(false, cpu.FlagN)
-	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	emu.CPU.PC++
 }
 
@@ -789,12 +789,12 @@ func INCHL(emu emulator.Emulation) {
 //
 // Decrements by 1 the value of register r.
 func DECr(r cpu.Halve, emu emulator.Emulation) {
-	v, _, halfCarry := sub8(emu.CPU.GetHalve(r), 1)
+	v, _, hCarry := sub8(emu.CPU.GetHalve(r), 1)
 	emu.CPU.SetHalve(r, v)
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(true, cpu.FlagN)
-	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	emu.CPU.PC++
 }
 
@@ -803,12 +803,12 @@ func DECr(r cpu.Halve, emu emulator.Emulation) {
 // Decrements by 1 the value in memory in address HL.
 func DECHL(emu emulator.Emulation) {
 	a := emu.CPU.GetReg(cpu.HL)
-	v, _, halfCarry := sub8(emu.RAM.GetByte(a), 1)
+	v, _, hCarry := sub8(emu.RAM.GetByte(a), 1)
 	emu.RAM.SetByte(v, a)
 
 	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
 	emu.CPU.SetFlag(true, cpu.FlagN)
-	emu.CPU.SetFlag(halfCarry, cpu.FlagH)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
 	emu.CPU.PC++
 }
 
@@ -1018,12 +1018,12 @@ func DAA(emu emulator.Emulation) {
 	// Obtains relevant flags about the previous arithmetic operation
 	isSub := emu.CPU.IsFlag(cpu.FlagN)
 	carry := emu.CPU.IsFlag(cpu.FlagC)
-	halfCarry := emu.CPU.IsFlag(cpu.FlagH)
+	hCarry := emu.CPU.IsFlag(cpu.FlagH)
 
 	v := emu.CPU.GetHalve(cpu.A)
 	loV := v & 0x0F
 
-	if (!isSub && loV > 0x09) || halfCarry {
+	if (!isSub && loV > 0x09) || hCarry {
 		offset |= 0x06
 	}
 
@@ -1084,5 +1084,45 @@ func DECrr(rr cpu.Register, emu emulator.Emulation) {
 //
 // Sets in register HL the value of HL + rr
 func ADDHLrr(rr cpu.Register, emu emulator.Emulation) {
+	v, carry, hCarry := add16(emu.CPU.GetReg(cpu.HL), emu.CPU.GetReg(rr))
+	emu.CPU.SetReg(cpu.HL, v)
 
+	emu.CPU.SetFlag(v == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
+
+	emu.CPU.PC++
+}
+
+// ADD SP, e: Add to stack pointer (relative)
+//
+// Sets in register SP the value of SP + e (8 bit)
+func ADDSPpe(emu emulator.Emulation) {
+	emu.CPU.PC++
+	e := int8(emu.RAM.GetByte(emu.CPU.PC)) // casted so its signed
+	sp := emu.CPU.GetReg(cpu.SP)
+
+	// Here we cast into int 32 to respect e's signed value
+	v := int32(emu.CPU.GetReg(cpu.SP)) + int32(e)
+
+	emu.CPU.SetReg(cpu.SP, uint16(v)) // And now we recast it to uint16
+
+	// Gets the lower byte of SP
+	loSP := byte(sp & cpu.LOW_MASK)
+	// Gets the unsigned value of e
+	loe := byte(e)
+
+	// Calculates if there was a carry in the 7th and 3rd bit
+	_, carry, hCarry := add8(loSP, loe)
+
+	// Sets the flag if it has a carry
+	emu.CPU.SetFlag(carry, cpu.FlagC)
+	// Sets the flag if it has a half carry
+	emu.CPU.SetFlag(hCarry, cpu.FlagH)
+	// The rest of the flags will never be set
+	emu.CPU.SetFlag(false, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+
+	emu.CPU.PC++
 }
