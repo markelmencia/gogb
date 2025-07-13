@@ -1008,3 +1008,23 @@ func CPL(emu emulator.Emulation) {
 	emu.CPU.SetFlag(true, cpu.FlagH)
 	emu.CPU.PC++
 }
+
+// INC rr: Increment 16-bit register
+//
+// Increments by 1 the value of 16-bit register rr
+func INCrr(rr cpu.Register, emu emulator.Emulation) {
+	v := emu.CPU.GetReg(rr) + 1
+
+	emu.CPU.SetReg(rr, v)
+	emu.CPU.PC++
+}
+
+// DEC rr: Decrement 16-bit register
+//
+// Decrements by 1 the value of 16-bit register rr
+func DECrr(rr cpu.Register, emu emulator.Emulation) {
+	v := emu.CPU.GetReg(rr) - 1
+
+	emu.CPU.SetReg(rr, v)
+	emu.CPU.PC++
+}

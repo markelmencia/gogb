@@ -1170,3 +1170,33 @@ func TestCPL(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestINCrr(t *testing.T) {
+	emu := getExampleEmulation()
+	bc := emu.CPU.GetReg(cpu.BC)
+
+	instructions.INCrr(cpu.BC, emu)
+
+	if emu.CPU.GetReg(cpu.BC) != bc+1 {
+		t.Fatal("Unexpected value in register BC")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestDECrr(t *testing.T) {
+	emu := getExampleEmulation()
+	bc := emu.CPU.GetReg(cpu.BC)
+
+	instructions.DECrr(cpu.BC, emu)
+
+	if emu.CPU.GetReg(cpu.BC) != bc-1 {
+		t.Fatal("Unexpected value in register BC")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
