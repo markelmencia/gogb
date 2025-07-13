@@ -995,3 +995,16 @@ func DAA(emu emulator.Emulation) {
 	emu.CPU.SetFlag(resultCarry, cpu.FlagC)
 	emu.CPU.PC++
 }
+
+// CPL: Complement accumulator
+//
+// Complements register A (flips its bits)
+// and sets flags N and H
+func CPL(emu emulator.Emulation) {
+	v := ^emu.CPU.GetHalve(cpu.A)
+
+	emu.CPU.SetHalve(cpu.A, v)
+	emu.CPU.SetFlag(true, cpu.FlagN)
+	emu.CPU.SetFlag(true, cpu.FlagH)
+	emu.CPU.PC++
+}

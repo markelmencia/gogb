@@ -1155,3 +1155,18 @@ func TestDAA(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestCPL(t *testing.T) {
+	emu := getExampleEmulation()
+	a := emu.CPU.GetHalve(cpu.A)
+
+	instructions.CPL(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != ^a {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
