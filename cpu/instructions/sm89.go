@@ -939,12 +939,59 @@ func CCF(emu emulator.Emulation) {
 	emu.CPU.PC++
 }
 
-// SCF: Complement carry flag
+// SCF: Set carry flag
 //
 //	Set the carry flag and clears N and H.
 func SCF(emu emulator.Emulation) {
 	emu.CPU.SetFlag(true, cpu.FlagC)
 	emu.CPU.SetFlag(false, cpu.FlagN)
 	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.PC++
+}
+
+// DAA: Decimal adjust accumulator
+//
+// Adjusts the value of A to turn it into a Binary Coded
+// Decimal (BCD) according to the previously performed
+// arithmetic operation.
+func DAA(emu emulator.Emulation) {
+	// NOTE: This instruction is rather unintuitive
+	// if the context of BCD is unknown. For more
+	// information about the workings of this
+	// instruction, this article is quite helpful:
+	// https://blog.ollien.com/posts/gb-daa/
+
+	offset := byte(0)
+	resultCarry := false
+
+	// Obtains relevant flags about the previous arithmetic operation
+	isSub := emu.CPU.IsFlag(cpu.FlagN)
+	carry := emu.CPU.IsFlag(cpu.FlagC)
+	halfCarry := emu.CPU.IsFlag(cpu.FlagH)
+
+	v := emu.CPU.GetHalve(cpu.A)
+	loV := v & 0x0F
+
+	if (!isSub && loV > 0x09) || halfCarry {
+		offset |= 0x06
+	}
+
+	if (!isSub && v > 0x99) || carry {
+		offset |= 0x60
+		resultCarry = true
+	}
+
+	var result byte
+	if isSub {
+		result = v - offset
+	} else {
+		result = v + offset
+	}
+
+	emu.CPU.SetHalve(cpu.A, result)
+
+	emu.CPU.SetFlag(result == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.SetFlag(resultCarry, cpu.FlagC)
 	emu.CPU.PC++
 }

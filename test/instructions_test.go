@@ -1101,3 +1101,57 @@ func TestSCF(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestDAA(t *testing.T) {
+	emu := getExampleEmulation()
+
+	emu.CPU.SetHalve(cpu.A, 0x07)
+	emu.CPU.SetHalve(cpu.B, 0x08)
+
+	instructions.ADDr(cpu.B, emu)
+	instructions.DAA(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != 0x15 {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+
+	emu.CPU.SetHalve(cpu.A, 0x54)
+	emu.CPU.SetHalve(cpu.B, 0x70)
+
+	instructions.ADDr(cpu.B, emu)
+	instructions.DAA(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != 0x24 {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected C flag value")
+	}
+
+	if emu.CPU.PC != 4 {
+		t.Fatal("Unexpected PC value")
+	}
+
+	emu.CPU.SetHalve(cpu.A, 0x05)
+	emu.CPU.SetHalve(cpu.B, 0x21)
+
+	instructions.SUBr(cpu.B, emu)
+	instructions.DAA(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != 0x84 {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected H flag value")
+	}
+
+	if emu.CPU.PC != 6 {
+		t.Fatal("Unexpected PC value")
+	}
+}
