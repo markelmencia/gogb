@@ -1029,12 +1029,12 @@ func TestXORHL(t *testing.T) {
 	}
 }
 
-func TestORNn(t *testing.T) {
+func TestXORn(t *testing.T) {
 	emu := getExampleEmulation()
 	a := emu.CPU.GetHalve(cpu.A)
 	instructions.XORn(emu)
 
-	if emu.CPU.GetHalve(cpu.A) != a|0x93 {
+	if emu.CPU.GetHalve(cpu.A) != a^0x93 {
 		t.Fatal("Unexpected value in register A")
 	}
 
