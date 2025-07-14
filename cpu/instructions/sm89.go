@@ -1143,3 +1143,20 @@ func RLCA(emu emulator.Emulation) {
 	emu.CPU.SetFlag(rot > 0, cpu.FlagC)
 	emu.CPU.PC++
 }
+
+// RRCA: Rotate right circular (accumulator)
+//
+// Shifts register A to the right once, and
+// bit 0 is copied into the C flag and bit 7.
+func RRCA(emu emulator.Emulation) {
+	a := emu.CPU.GetHalve(cpu.A)
+	// Moves bit 0 to the highest position,
+	// esentially rotating it
+	rot := a << 7
+	v := a>>1 | rot
+
+	emu.CPU.SetHalve(cpu.A, v)
+	// If the 7 bit was 1, we set flag C
+	emu.CPU.SetFlag(rot > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
