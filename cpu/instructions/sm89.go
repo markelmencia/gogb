@@ -1126,3 +1126,20 @@ func ADDSPpe(emu emulator.Emulation) {
 
 	emu.CPU.PC++
 }
+
+// RLCA: Rotate left circular (accumulator)
+//
+// Shifts register A to the left once, and
+// bit 7 is copied into the C flag and bit 0.
+func RLCA(emu emulator.Emulation) {
+	a := emu.CPU.GetHalve(cpu.A)
+	// Moves bit 7 to the lowest position,
+	// esentially rotating it
+	rot := a >> 7
+	v := a<<1 | rot
+
+	emu.CPU.SetHalve(cpu.A, v)
+	// If the 7 bit was 1, we set flag C
+	emu.CPU.SetFlag(rot > 0, cpu.FlagC)
+	emu.CPU.PC++
+}

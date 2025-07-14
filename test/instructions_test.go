@@ -1258,3 +1258,33 @@ func TestADDSPpe(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestRLCA(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetHalve(cpu.A, 0x7F)
+	instructions.RLCA(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != 0xFE {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	// A: 0xFE
+	instructions.RLCA(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != 0xFD {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+
+}
