@@ -1304,7 +1304,6 @@ func TestRRCA(t *testing.T) {
 
 	// A: 0x7F
 	instructions.RRCA(emu)
-	emu.CPU.PrintStatus()
 
 	if emu.CPU.GetHalve(cpu.A) != 0xBF {
 		t.Fatal("Unexpected value in register A")
@@ -1348,4 +1347,33 @@ func TestRLA(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 
+}
+
+func TestRRA(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetHalve(cpu.A, 0xFE)
+	instructions.RRA(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != 0x7F {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	// A: 0x7F
+	instructions.RRA(emu)
+
+	if emu.CPU.GetHalve(cpu.A) != 0x3F {
+		t.Fatal("Unexpected value in register A")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
 }
