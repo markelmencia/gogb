@@ -1423,3 +1423,52 @@ func SRAHL(emu emulator.Emulation) {
 	emu.CPU.SetFlag(v<<7 > 0, cpu.FlagC)
 	emu.CPU.PC++
 }
+
+// SWAP r: Swap nibbles (register)
+//
+// Swaps the high nibble of a register
+// with its low nibble.
+func SWAPr(r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	// Stores the high nibble
+	hNib := v & 0xF0
+
+	// Shifts the register value left to move
+	// the low nibble value to the high nibble.
+	// Then adds the high nibble shifted to the
+	// right to perform the swap
+	result := v<<4 | (hNib >> 4)
+
+	emu.CPU.SetHalve(r, result)
+
+	emu.CPU.SetFlag(result == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.SetFlag(false, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// SWAP HL: Swap nibbles (indirect HL)
+//
+// Swaps the high nibble of the memory
+// value in HL with its low nibble.
+func SWAPHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+	// Stores the high nibble
+	hNib := v & 0xF0
+
+	// Shifts the register value left to move
+	// the low nibble value to the high nibble.
+	// Then adds the high nibble shifted to the
+	// right to perform the swap
+	result := v<<4 | (hNib >> 4)
+
+	emu.RAM.SetByte(result, a)
+
+	emu.CPU.SetFlag(result == 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(false, cpu.FlagH)
+	emu.CPU.SetFlag(false, cpu.FlagC)
+	emu.CPU.PC++
+}
