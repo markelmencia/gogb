@@ -1200,3 +1200,73 @@ func RRA(emu emulator.Emulation) {
 	emu.CPU.SetFlag(a<<7 > 0, cpu.FlagC)
 	emu.CPU.PC++
 }
+
+// RLC r: Rotate left circular (reigster)
+//
+// Shifts register r to the left once, and
+// bit 7 is copied into the C flag and bit 0.
+func RLCr(r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	// Moves bit 7 to the lowest position,
+	// esentially rotating it
+	rot := v >> 7
+	result := v<<1 | rot
+
+	emu.CPU.SetHalve(r, result)
+	// If bit 7 was 1, we set flag C
+	emu.CPU.SetFlag(rot > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// RLC (HL): Rotate left circular (indirect HL)
+//
+// Shifts the value in address HL to the left once, and
+// bit 7 is copied into the C flag and bit 0.
+func RLCHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+	// Moves bit 7 to the lowest position,
+	// esentially rotating it
+	rot := v >> 7
+	result := v<<1 | rot
+
+	emu.RAM.SetByte(result, a)
+	// If bit 7 was 1, we set flag C
+	emu.CPU.SetFlag(rot > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// RRC r: Rotate right circular (register)
+//
+// Shifts register r to the right once, and
+// bit 0 is copied into the C flag and bit 7.
+func RRCr(r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	// Moves bit 0 to the highest position,
+	// esentially rotating it
+	rot := v << 7
+	result := v>>1 | rot
+
+	emu.CPU.SetHalve(r, result)
+	// If bit 7 was 1, we set flag C
+	emu.CPU.SetFlag(rot > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// RRC (HL): Rotate right circular (indirect HL)
+//
+// Shifts the value in address HL to the right once, and
+// bit 0 is copied into the C flag and bit 7.
+func RRCHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+	// Moves bit 0 to the highest position,
+	// esentially rotating it
+	rot := v << 7
+	result := v>>1 | rot
+
+	emu.RAM.SetByte(result, a)
+	// If bit 7 was 1, we set flag C
+	emu.CPU.SetFlag(rot > 0, cpu.FlagC)
+	emu.CPU.PC++
+}

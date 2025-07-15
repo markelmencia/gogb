@@ -1208,8 +1208,6 @@ func TestADDHLrr(t *testing.T) {
 
 	instructions.ADDHLrr(cpu.DE, emu)
 
-	emu.CPU.PrintStatus()
-
 	if emu.CPU.GetReg(cpu.HL) != 0x10EB {
 		t.Fatal("Unexpected value in register HL")
 	}
@@ -1286,7 +1284,6 @@ func TestRLCA(t *testing.T) {
 	if emu.CPU.PC != 2 {
 		t.Fatal("Unexpected PC value")
 	}
-
 }
 
 func TestRRCA(t *testing.T) {
@@ -1367,6 +1364,93 @@ func TestRRA(t *testing.T) {
 
 	if emu.CPU.GetHalve(cpu.A) != 0x3F {
 		t.Fatal("Unexpected value in register A")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestRLCr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetHalve(cpu.B, 0x7F)
+	instructions.RLCr(cpu.B, emu)
+
+	if emu.CPU.GetHalve(cpu.B) != 0xFE {
+		t.Fatal("Unexpected value in register B")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	// B: 0xFE
+	instructions.RLCr(cpu.B, emu)
+
+	if emu.CPU.GetHalve(cpu.B) != 0xFD {
+		t.Fatal("Unexpected value in register B")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestRLCHL(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.RAM.SetByte(0x7F, 0xDEAD)
+	instructions.RLCHL(emu)
+
+	if emu.RAM.GetByte(0xDEAD) != 0xFE {
+		t.Fatal("Unexpected value in memory")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	// (HL): 0xFE
+	instructions.RLCHL(emu)
+
+	if emu.RAM.GetByte(0xDEAD) != 0xFD {
+		t.Fatal("Unexpected value in memory")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestRRCr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetHalve(cpu.B, 0xFE)
+	instructions.RRCr(cpu.B, emu)
+
+	if emu.CPU.GetHalve(cpu.B) != 0x7F {
+		t.Fatal("Unexpected value in register B")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	// B: 0x7F
+	instructions.RRCr(cpu.B, emu)
+
+	if emu.CPU.GetHalve(cpu.B) != 0xBF {
+		t.Fatal("Unexpected value in register B")
 	}
 
 	if !emu.CPU.IsFlag(cpu.FlagC) {
