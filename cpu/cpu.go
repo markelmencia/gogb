@@ -10,8 +10,13 @@ const (
 	LOW_MASK  uint16 = 0x00FF
 )
 
+// Defines an 8-bit halve in the CPU (eg. halve A in register AF).
 type Halve byte
+
+// Defines a 16-bit register in the CPU (eg. AF).
 type Register byte
+
+// Defines a register flag (eg. Z).
 type Flag byte
 
 // Defines an enum for each halve register
@@ -42,13 +47,13 @@ const (
 
 // Defines an enum with each flag
 const (
-	// Set when the value of an operation is 0
+	// Set when the value of an operation is 0.
 	FlagZ Flag = iota
-	// Set when the operation performed is a subtraction
+	// Set when the operation performed is a subtraction.
 	FlagN
-	// Set when there is a carry in bit 3 after an operation
+	// Set when there is a carry in bit 3 after an operation.
 	FlagH
-	// Set when there is a carry in bit 7 after an operation
+	// Set when there is a carry in bit 7 after an operation.
 	FlagC
 )
 
