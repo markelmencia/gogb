@@ -1467,7 +1467,7 @@ func TestRLr(t *testing.T) {
 	instructions.RLr(cpu.B, emu)
 
 	if emu.CPU.GetHalve(cpu.B) != 0xFE {
-		t.Fatal("Unexpected value in register A")
+		t.Fatal("Unexpected value in register B")
 	}
 
 	if emu.CPU.IsFlag(cpu.FlagC) {
@@ -1479,7 +1479,7 @@ func TestRLr(t *testing.T) {
 	instructions.RLr(cpu.B, emu)
 
 	if emu.CPU.GetHalve(cpu.B) != 0xFD {
-		t.Fatal("Unexpected value in register A")
+		t.Fatal("Unexpected value in register B")
 	}
 
 	if !emu.CPU.IsFlag(cpu.FlagC) {
@@ -1556,7 +1556,7 @@ func TestRRHL(t *testing.T) {
 	instructions.RRHL(emu)
 
 	if emu.RAM.GetByte(0xDEAD) != 0x7F {
-		t.Fatal("Unexpected value in register A")
+		t.Fatal("Unexpected value in memory")
 	}
 
 	if emu.CPU.IsFlag(cpu.FlagC) {
@@ -1567,7 +1567,125 @@ func TestRRHL(t *testing.T) {
 	instructions.RRHL(emu)
 
 	if emu.RAM.GetByte(0xDEAD) != 0x3F {
-		t.Fatal("Unexpected value in register A")
+		t.Fatal("Unexpected value in memory")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestSLAr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetHalve(cpu.B, 0x7F)
+	instructions.SLAr(cpu.B, emu)
+
+	if emu.CPU.GetHalve(cpu.B) != 0xFE {
+		t.Fatal("Unexpected value in register B")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	// B: 0xFE
+	emu.CPU.SetFlag(true, cpu.FlagC)
+	instructions.SLAr(cpu.B, emu)
+
+	if emu.CPU.GetHalve(cpu.B) != 0xFC {
+		t.Fatal("Unexpected value in register B")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestSLAHL(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.RAM.SetByte(0x7F, 0xDEAD)
+	instructions.SLAHL(emu)
+
+	if emu.RAM.GetByte(0xDEAD) != 0xFE {
+		t.Fatal("Unexpected value in memory")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	// B: 0xFE
+	emu.CPU.SetFlag(true, cpu.FlagC)
+	instructions.SLAHL(emu)
+
+	if emu.RAM.GetByte(0xDEAD) != 0xFC {
+		t.Fatal("Unexpected value in memory")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestSRAr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetHalve(cpu.B, 0xFE)
+	instructions.SRAr(cpu.B, emu)
+
+	if emu.CPU.GetHalve(cpu.B) != 0xFF {
+		t.Fatal("Unexpected value in register B")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	emu.CPU.SetHalve(cpu.B, 0x7F)
+	instructions.SRAr(cpu.B, emu)
+
+	if emu.CPU.GetHalve(cpu.B) != 0x3F {
+		t.Fatal("Unexpected value in register B")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestSRAHL(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.RAM.SetByte(0xFE, 0xDEAD)
+	instructions.SRAHL(emu)
+
+	if emu.RAM.GetByte(0xDEAD) != 0xFF {
+		t.Fatal("Unexpected value in memory")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		t.Fatal("Unexpected flag C value")
+	}
+
+	emu.RAM.SetByte(0x7F, 0xDEAD)
+	instructions.SRAHL(emu)
+
+	if emu.RAM.GetByte(0xDEAD) != 0x3F {
+		t.Fatal("Unexpected value in memory")
 	}
 
 	if !emu.CPU.IsFlag(cpu.FlagC) {

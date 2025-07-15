@@ -1353,3 +1353,73 @@ func RRHL(emu emulator.Emulation) {
 	emu.CPU.SetFlag(v<<7 > 0, cpu.FlagC)
 	emu.CPU.PC++
 }
+
+// SLA r: Shift left arithmetic (register)
+//
+// Shifts register r to the left once and bit 7
+// is copied into flag C
+func SLAr(r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	result := v << 1
+
+	emu.CPU.SetHalve(r, result)
+	// If bit 7 was 1, we set flag C
+	emu.CPU.SetFlag(v>>7 > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// SLA (HL): Shift left arithmetic (indirect HL)
+//
+// Shifts the memory value in address HL
+// to the left once and bit 7 is copied into flag C
+func SLAHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+	result := v << 1
+
+	emu.RAM.SetByte(result, a)
+	// If bit 7 was 1, we set flag C
+	emu.CPU.SetFlag(v>>7 > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// SRA r: Shift right arithmetic (register)
+//
+// Shifts register r to the right once and bit 7
+// is copied into flag C.
+//
+// NOTE: Bit 7 is kept as-is. Its value *will* be
+// rotated right, but bit 7 will remain unchanged.
+func SRAr(r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	bit7 := (v & 0b10000000) // Masks v to clear everything but bit 7
+
+	// Bit 7 is added to the result so it remains unchanged
+	result := v>>1 | bit7
+
+	emu.CPU.SetHalve(r, result)
+	// If bit 0 was 1, we set flag C
+	emu.CPU.SetFlag(v<<7 > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// SRA (HL): Shift right arithmetic (indirect HL)
+//
+// Shifts memory value in address HL
+// to the right once and bit 7 is copied into flag C.
+//
+// NOTE: Bit 7 is kept as-is. Its value *will* be
+// rotated right, but bit 7 will remain unchanged.
+func SRAHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+	bit7 := (v & 0b10000000) // Masks v to clear everything but bit 7
+
+	// Bit 7 is added to the result so it remains unchanged
+	result := v>>1 | bit7
+
+	emu.RAM.SetByte(result, a)
+	// If bit 0 was 1, we set flag C
+	emu.CPU.SetFlag(v<<7 > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
