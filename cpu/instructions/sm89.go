@@ -1165,7 +1165,7 @@ func RRCA(emu emulator.Emulation) {
 //
 // Shifts register A to the left once, bit 7
 // is copied into flag C, and flag C is copied
-// into register 0.
+// into bit 0.
 func RLA(emu emulator.Emulation) {
 	a := emu.CPU.GetHalve(cpu.A)
 	var rot byte
@@ -1185,7 +1185,7 @@ func RLA(emu emulator.Emulation) {
 //
 // Shifts register A to the right once, bit 0
 // is copied into flag C, and flag C is copied
-// into register 7.
+// into bit 7.
 func RRA(emu emulator.Emulation) {
 	a := emu.CPU.GetHalve(cpu.A)
 	var rot byte
@@ -1268,5 +1268,88 @@ func RRCHL(emu emulator.Emulation) {
 	emu.RAM.SetByte(result, a)
 	// If bit 7 was 1, we set flag C
 	emu.CPU.SetFlag(rot > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// RL r: Rotate left (register)
+//
+// Shifts register r to the left once, bit 7
+// is copied into flag C, and flag C is copied
+// into bit 0.
+func RLr(r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	var rot byte
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		rot = 1
+	}
+
+	result := v<<1 | rot
+
+	emu.CPU.SetHalve(r, result)
+	// If bit 7 was 1, we set flag C
+	emu.CPU.SetFlag(v>>7 > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// RL (HL): Rotate left (indirect HL)
+//
+// Shifts the memory value in HL to the left once, bit 7
+// is copied into flag C, and flag C is copied
+// into bit 0.
+func RLHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+
+	var rot byte
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		rot = 1
+	}
+
+	result := v<<1 | rot
+
+	emu.RAM.SetByte(result, a)
+	// If bit 7 was 1, we set flag C
+	emu.CPU.SetFlag(v>>7 > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// RR r: Rotate right (register)
+//
+// Shifts register r to the right once, bit 0
+// is copied into flag C, and flag C is copied
+// into bit 7.
+func RRr(r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	var rot byte
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		rot = 0b10000000 // 0x80
+	}
+
+	result := v>>1 | rot
+
+	emu.CPU.SetHalve(r, result)
+	// If bit 7 was 1, we set flag C
+	emu.CPU.SetFlag(v<<7 > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// RR (HL): Rotate right (indirect HL)
+//
+// Shifts the memory value in HL to the right once, bit 0
+// is copied into flag C, and flag C is copied
+// into bit 7.
+func RRHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+	var rot byte
+	if emu.CPU.IsFlag(cpu.FlagC) {
+		rot = 0b10000000 // 0x80
+	}
+
+	result := v>>1 | rot
+
+	emu.RAM.SetByte(result, a)
+	// If bit 7 was 1, we set flag C
+	emu.CPU.SetFlag(v<<7 > 0, cpu.FlagC)
 	emu.CPU.PC++
 }
