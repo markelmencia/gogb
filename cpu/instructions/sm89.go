@@ -1538,3 +1538,31 @@ func BITbHL(b byte, emu emulator.Emulation) {
 	emu.CPU.SetFlag(true, cpu.FlagH)
 	emu.CPU.PC++
 }
+
+// RES b, r: Reset bit (register)
+//
+// Resets (sets to 0) the bit in position b in register r.
+func RESbr(b byte, r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	// Inverts the mask to filter out bit b
+	mask := ^cpu.GetBitMask(b)
+	result := v & mask
+
+	emu.CPU.SetHalve(r, result)
+	emu.CPU.PC++
+}
+
+// RES b, (HL): Reset bit (indirect HL)
+//
+// Resets (sets to 0) the bit in position b of the memory
+// value in address HL.
+func RESbHL(b byte, emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+	// Inverts the mask to filter out bit b
+	mask := ^cpu.GetBitMask(b)
+	result := v & mask
+
+	emu.RAM.SetByte(result, a)
+	emu.CPU.PC++
+}

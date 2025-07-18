@@ -1880,3 +1880,31 @@ func TestBITbHL(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestSETbr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetHalve(cpu.L, 0b00001011)
+	instructions.RESbr(3, cpu.L, emu)
+
+	if emu.CPU.GetHalve(cpu.L) != 0b00000011 {
+		t.Fatal("Unexpected value in register L")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestSETbHL(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetReg(cpu.HL, 0x0002)
+	instructions.RESbHL(5, emu)
+
+	if emu.CPU.GetHalve(cpu.L) != 0xDF {
+		t.Fatal("Unexpected value in memory")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
