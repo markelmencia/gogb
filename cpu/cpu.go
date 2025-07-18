@@ -261,6 +261,32 @@ var registerToAccessor = map[Register]RegisterAccessor{
 	},
 }
 
+// Associates a bit index to
+// a mask to obtain only said
+// bit.
+var bitToMask = map[byte]byte{
+	0: 0b00000001,
+	1: 0b00000010,
+	2: 0b00000100,
+	3: 0b00001000,
+	4: 0b00010000,
+	5: 0b00100000,
+	6: 0b01000000,
+	7: 0b10000000,
+}
+
+// Returns a byte with a mask as its value. T
+// This mask filters out everything but bit b.
+//
+// If b is not between 0-7, 0 will be returned.
+func GetBitMask(b byte) byte {
+	v, ok := bitToMask[b]
+	if !ok {
+		return 0
+	}
+	return v
+}
+
 // Returns the appropiate mask
 // to obtain the corresponding
 // byte to the desired flag.
