@@ -1552,9 +1552,9 @@ func RESbr(b byte, r cpu.Halve, emu emulator.Emulation) {
 	emu.CPU.PC++
 }
 
-// RES b, (HL): Reset bit (indirect HL)
+// SET b, (HL): Set bit (indirect HL)
 //
-// Resets (sets to 0) the bit in position b of the memory
+// Sets the bit in position b of the memory
 // value in address HL.
 func RESbHL(b byte, emu emulator.Emulation) {
 	a := emu.CPU.GetReg(cpu.HL)
@@ -1562,6 +1562,32 @@ func RESbHL(b byte, emu emulator.Emulation) {
 	// Inverts the mask to filter out bit b
 	mask := ^cpu.GetBitMask(b)
 	result := v & mask
+
+	emu.RAM.SetByte(result, a)
+	emu.CPU.PC++
+}
+
+// SET b, r: Set bit (register)
+//
+// Sets the bit in position b in register r.
+func SETbr(b byte, r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	mask := cpu.GetBitMask(b)
+	result := v | mask
+
+	emu.CPU.SetHalve(r, result)
+	emu.CPU.PC++
+}
+
+// SET b, (HL): Set bit (indirect HL)
+//
+// Sets the bit in position b of the memory
+// value in address HL.
+func SETbHL(b byte, emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+	mask := cpu.GetBitMask(b)
+	result := v | mask
 
 	emu.RAM.SetByte(result, a)
 	emu.CPU.PC++

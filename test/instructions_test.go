@@ -1881,7 +1881,7 @@ func TestBITbHL(t *testing.T) {
 	}
 }
 
-func TestSETbr(t *testing.T) {
+func TestRESbr(t *testing.T) {
 	emu := getExampleEmulation()
 	emu.CPU.SetHalve(cpu.L, 0b00001011)
 	instructions.RESbr(3, cpu.L, emu)
@@ -1895,12 +1895,40 @@ func TestSETbr(t *testing.T) {
 	}
 }
 
-func TestSETbHL(t *testing.T) {
+func TestRESbHL(t *testing.T) {
 	emu := getExampleEmulation()
 	emu.CPU.SetReg(cpu.HL, 0x0002)
 	instructions.RESbHL(5, emu)
 
-	if emu.CPU.GetHalve(cpu.L) != 0xDF {
+	if emu.RAM.GetByte(0x0002) != 0xDF {
+		t.Fatal("Unexpected value in memory")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestSETbr(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetHalve(cpu.L, 0b00001011)
+	instructions.SETbr(2, cpu.L, emu)
+
+	if emu.CPU.GetHalve(cpu.L) != 0b00001111 {
+		t.Fatal("Unexpected value in register L")
+	}
+
+	if emu.CPU.PC != 1 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestSETbHL(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetReg(cpu.HL, 0x0001)
+	instructions.SETbHL(2, emu)
+
+	if emu.RAM.GetByte(0x0001) != 0x97 {
 		t.Fatal("Unexpected value in memory")
 	}
 
