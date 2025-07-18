@@ -1472,3 +1472,39 @@ func SWAPHL(emu emulator.Emulation) {
 	emu.CPU.SetFlag(false, cpu.FlagC)
 	emu.CPU.PC++
 }
+
+// SRL r: Shift right logical (register)
+//
+// Shifts register r to the right logically once and bit 7
+// is copied into flag C.
+//
+// NOTE: Bit 7 is kept as-is. Its value *will* be
+// rotated right, but bit 7 will remain unchanged.
+func SRLr(r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	result := v >> 1
+
+	emu.CPU.SetHalve(r, result)
+	// If bit 0 was 1, we set flag C
+	emu.CPU.SetFlag(v<<7 > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
+
+// SRL (HL): Shift right logical (indirect HL)
+//
+// Shifts memory value in address HL
+// to the right logically once and bit 7 is copied into flag C.
+//
+// NOTE: Bit 7 is kept as-is. Its value *will* be
+// rotated right, but bit 7 will remain unchanged.
+func SRLHL(emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+
+	result := v >> 1
+
+	emu.RAM.SetByte(result, a)
+	// If bit 0 was 1, we set flag C
+	emu.CPU.SetFlag(v<<7 > 0, cpu.FlagC)
+	emu.CPU.PC++
+}
