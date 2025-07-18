@@ -1813,3 +1813,70 @@ func TestSRLHL(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestBITbr(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.BITbr(5, cpu.L, emu)
+	if !emu.CPU.IsFlag(cpu.FlagZ) {
+		t.Fatal("Unexpected flag Z value")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected flag N value")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag H value")
+	}
+
+	instructions.BITbr(4, cpu.L, emu)
+	if emu.CPU.IsFlag(cpu.FlagZ) {
+		t.Fatal("Unexpected flag Z value")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected flag N value")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag H value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestBITbHL(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetReg(cpu.HL, 0x0001)
+	instructions.BITbHL(6, emu)
+	if emu.CPU.IsFlag(cpu.FlagZ) {
+		t.Fatal("Unexpected flag Z value")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected flag N value")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag H value")
+	}
+
+	instructions.BITbHL(7, emu)
+	if !emu.CPU.IsFlag(cpu.FlagZ) {
+		t.Fatal("Unexpected flag Z value")
+	}
+
+	if emu.CPU.IsFlag(cpu.FlagN) {
+		t.Fatal("Unexpected flag N value")
+	}
+
+	if !emu.CPU.IsFlag(cpu.FlagH) {
+		t.Fatal("Unexpected flag H value")
+	}
+
+	if emu.CPU.PC != 2 {
+		t.Fatal("Unexpected PC value")
+	}
+}

@@ -1508,3 +1508,33 @@ func SRLHL(emu emulator.Emulation) {
 	emu.CPU.SetFlag(v<<7 > 0, cpu.FlagC)
 	emu.CPU.PC++
 }
+
+// BIT b, r: Test bit (register)
+//
+// Sets flag Z if the bit in position b of register r is zero.
+func BITbr(b byte, r cpu.Halve, emu emulator.Emulation) {
+	v := emu.CPU.GetHalve(r)
+	// Filters out everything but bit b
+	bit := v & cpu.GetBitMask(b)
+
+	emu.CPU.SetFlag(bit > 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(true, cpu.FlagH)
+	emu.CPU.PC++
+}
+
+// BIT b, (HL): Test bit (indirect HL)
+//
+// Sets flag Z if the bit in position b of the
+// memory value in address HL is zero.
+func BITbHL(b byte, emu emulator.Emulation) {
+	a := emu.CPU.GetReg(cpu.HL)
+	v := emu.RAM.GetByte(a)
+	// Filters out everything but bit b
+	bit := v & cpu.GetBitMask(b)
+
+	emu.CPU.SetFlag(bit > 0, cpu.FlagZ)
+	emu.CPU.SetFlag(false, cpu.FlagN)
+	emu.CPU.SetFlag(true, cpu.FlagH)
+	emu.CPU.PC++
+}
