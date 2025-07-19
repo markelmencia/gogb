@@ -4,11 +4,7 @@ import (
 	"fmt"
 )
 
-// Masks that allow splitting combined registers.
-const (
-	HIGH_MASK uint16 = 0xFF00
-	LOW_MASK  uint16 = 0x00FF
-)
+/* TYPE DEFINITIONS */
 
 // Defines an 8-bit halve in the CPU (eg. halve A in register AF).
 type Halve byte
@@ -18,6 +14,7 @@ type Register byte
 
 // Defines a register flag (eg. Z).
 type Flag byte
+/* ENUM DEFINITIONS */
 
 // Defines an enum for each halve register
 // in the CPU.
@@ -45,7 +42,7 @@ const (
 	PC
 )
 
-// Defines an enum with each flag
+// Defines an enum with each flag.
 const (
 	// Set when the value of an operation is 0.
 	FlagZ Flag = iota
@@ -74,7 +71,31 @@ type CPU struct {
 	PC uint16 // Program Counter
 }
 
-// Getters / Setters
+/* GETTERS / SETTERS */
+
+// Gets the appropiate register getter
+// and returns the value of the register.
+func (c *CPU) GetHalve(h Halve) byte {
+	return halveToAccessor[h].Get(c)
+}
+
+// Gets the appropiate register setter
+// and sets v into the register.
+func (c *CPU) SetHalve(h Halve, v byte) {
+	halveToAccessor[h].Set(c, v)
+}
+
+// Gets the appropiate register getter
+// and returns the value of the register.
+func (c *CPU) GetReg(r Register) uint16 {
+	return registerToAccessor[r].Get(c)
+}
+
+// Gets the appropiate register setter
+// and sets v into the register.
+func (c *CPU) SetReg(r Register, v uint16) {
+	registerToAccessor[r].Set(c, v)
+}
 
 // Interface that stores both
 // the getter and the setter
@@ -180,18 +201,6 @@ var halveToAccessor = map[Halve]HalveAccessor{
 	},
 }
 
-// Gets the appropiate register getter
-// and returns the value of the register.
-func (c *CPU) GetHalve(h Halve) byte {
-	return halveToAccessor[h].Get(c)
-}
-
-// Gets the appropiate register setter
-// and sets v into the register.
-func (c *CPU) SetHalve(h Halve, v byte) {
-	halveToAccessor[h].Set(c, v)
-}
-
 // Map that contains a getter/setter pair
 // for each register.
 var registerToAccessor = map[Register]RegisterAccessor{
@@ -261,6 +270,14 @@ var registerToAccessor = map[Register]RegisterAccessor{
 	},
 }
 
+/* MASKS */
+
+// Masks that allow splitting combined registers.
+const (
+	HIGH_MASK uint16 = 0xFF00
+	LOW_MASK  uint16 = 0x00FF
+)
+
 // Associates a bit index to
 // a mask to obtain only said
 // bit.
@@ -275,7 +292,7 @@ var bitToMask = map[byte]byte{
 	7: 0b10000000,
 }
 
-// Returns a byte with a mask as its value. T
+// Returns a byte with a mask as its value.
 // This mask filters out everything but bit b.
 //
 // If b is not between 0-7, 0 will be returned.
@@ -287,6 +304,8 @@ func GetBitMask(b byte) byte {
 	return v
 }
 
+/* FLAGS */
+
 // Returns the appropiate mask
 // to obtain the corresponding
 // byte to the desired flag.
@@ -296,8 +315,6 @@ var flagToMask = map[Flag]byte{
 	FlagH: 0b00100000,
 	FlagC: 0b00010000,
 }
-
-// Flags
 
 // Obtains the bit that corresponds to flag f, and
 // returns true if it was set. If it wasn't, it returns
@@ -330,18 +347,6 @@ func (c *CPU) SetFlag(s bool, f Flag) {
 		v = c.GetHalve(F) & ^mask
 	}
 	c.SetHalve(F, v)
-}
-
-// Gets the appropiate register getter
-// and returns the value of the register.
-func (c *CPU) GetReg(r Register) uint16 {
-	return registerToAccessor[r].Get(c)
-}
-
-// Gets the appropiate register setter
-// and sets v into the register.
-func (c *CPU) SetReg(r Register, v uint16) {
-	registerToAccessor[r].Set(c, v)
 }
 
 // Prints the values of all registers
