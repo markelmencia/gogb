@@ -1936,3 +1936,61 @@ func TestSETbHL(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestJPnn(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.JPnn(emu)
+
+	if emu.CPU.PC != 0xFF93 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestJPHL(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.JPHL(emu)
+
+	if emu.CPU.PC != 0xDEAD {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func JPccnn(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.JPHL(emu)
+
+	if emu.CPU.PC != 0xDEAD {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestJPccnn(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetFlag(true, cpu.FlagC)
+	instructions.JPccnn(cpu.CondC, emu)
+
+	if emu.CPU.PC != 0xFF93 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestJRe(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.PC++          // 0x0001
+	instructions.JRe(emu) // PC will increment, then go back to 0x0002 - 0x0001
+
+	if emu.CPU.PC != 0x0001 {
+		t.Fatal("Unexpected PC value")
+	}
+}
+
+func TestJRcce(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetFlag(false, cpu.FlagZ)
+	emu.CPU.PC++                        // 0x0001
+	instructions.JRcce(cpu.CondNZ, emu) // PC will increment, then go back to 0x0002 - 0x0001
+
+	if emu.CPU.PC != 0x0001 {
+		t.Fatal("Unexpected PC value")
+	}
+}

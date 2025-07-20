@@ -408,7 +408,7 @@ func POPrr(rr cpu.Register, emu emulator.Emulation) {
 func LDHLSPpe(emu emulator.Emulation) {
 	emu.CPU.PC++
 	e := int8(emu.RAM.GetByte(emu.CPU.PC)) // casted so its signed
-	// Here we cast into int 32 to respect e's signed value
+	// Casted into int 32 to respect e's signed value
 	v := int32(emu.CPU.GetReg(cpu.SP)) + int32(e)
 
 	emu.CPU.SetReg(cpu.HL, uint16(v)) // And now we recast it to uint16
@@ -1591,4 +1591,81 @@ func SETbHL(b byte, emu emulator.Emulation) {
 
 	emu.RAM.SetByte(result, a)
 	emu.CPU.PC++
+}
+
+// JP nn: Jump
+//
+// Jumps (inconditionally) to the address
+// specified in the next two bytes to the
+// instruction.
+func JPnn(emu emulator.Emulation) {
+	emu.CPU.PC++
+	nLo := emu.RAM.GetByte(emu.CPU.PC)
+	emu.CPU.PC++
+	nHi := emu.RAM.GetByte(emu.CPU.PC)
+	v := uint16(nHi)<<8 | uint16(nLo)
+
+	emu.CPU.SetReg(cpu.PC, v)
+}
+
+// JP HL: Jump to HL
+//
+// Jumps (inconditionally) to the address
+// specified in register HL
+func JPHL(emu emulator.Emulation) {
+	v := emu.CPU.GetReg(cpu.HL)
+
+	emu.CPU.SetReg(cpu.PC, v)
+}
+
+// JP cc, nn: Jump (conditional)
+//
+// Jumps to the address specified in the following
+// two bytes in memory from the instruction if
+// the condition cc is true.
+func JPccnn(cc cpu.CondType, emu emulator.Emulation) {
+	emu.CPU.PC++
+	nLo := emu.RAM.GetByte(emu.CPU.PC)
+	emu.CPU.PC++
+	nHi := emu.RAM.GetByte(emu.CPU.PC)
+	v := uint16(nHi)<<8 | uint16(nLo)
+
+	if cc.ToCondition(*emu.CPU) {
+		emu.CPU.SetReg(cpu.PC, v)
+	} else {
+		emu.CPU.PC++
+	}
+}
+
+// JR e: Relative jump
+//
+// Jumps (inconditionally) to the address calculated
+// by adding the signed value e to the PC value, e
+// being the value in memory next to PC.
+func JRe(emu emulator.Emulation) {
+	emu.CPU.PC++
+	e := int8(emu.RAM.GetByte(emu.CPU.PC)) // Signed
+	// Casted into int 32 to respect e's signed value
+	v := uint16(emu.CPU.GetReg(cpu.PC)) + uint16(e)
+
+	emu.CPU.SetReg(cpu.PC, uint16(v))
+}
+
+// JR e: Relative jump
+//
+// Jumps to the address calculated
+// by adding the signed value e to the PC value, e
+// being the value in memory next to PC, so long as
+// cc is true.
+func JRcce(cc cpu.CondType, emu emulator.Emulation) {
+	emu.CPU.PC++
+	e := int8(emu.RAM.GetByte(emu.CPU.PC)) // Signed
+	// Casted into int 32 to respect e's signed value
+	v := uint16(emu.CPU.GetReg(cpu.PC)) + uint16(e)
+
+	if cc.ToCondition(*emu.CPU) {
+		emu.CPU.SetReg(cpu.PC, uint16(v))
+	} else {
+		emu.CPU.PC++
+	}
 }
