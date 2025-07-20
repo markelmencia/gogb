@@ -178,3 +178,25 @@ func TestFlags(t *testing.T) {
 		t.Fatal("Unexpected value in F")
 	}
 }
+
+func TestConds(t *testing.T) {
+	c := getExampleCPU()
+	c.SetFlag(false, cpu.FlagZ)
+	c.SetFlag(true, cpu.FlagC)
+
+	if cpu.CondZ.ToCondition(*c) {
+		t.Fatal("Unexpected Z condition value")
+	}
+
+	if !cpu.CondNZ.ToCondition(*c) {
+		t.Fatal("Unexpected NZ condition value")
+	}
+
+	if !cpu.CondC.ToCondition(*c) {
+		t.Fatal("Unexpected C condition value")
+	}
+
+	if cpu.CondNC.ToCondition(*c) {
+		t.Fatal("Unexpected NC condition value")
+	}
+}

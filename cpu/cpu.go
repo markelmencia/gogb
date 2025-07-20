@@ -14,6 +14,10 @@ type Register byte
 
 // Defines a register flag (eg. Z).
 type Flag byte
+
+// Defines a condition type in jump (JP) instructions.
+type CondType byte
+
 /* ENUM DEFINITIONS */
 
 // Defines an enum for each halve register
@@ -53,6 +57,31 @@ const (
 	// Set when there is a carry in bit 7 after an operation.
 	FlagC
 )
+
+// Defines an enum with each condition type
+// in jump instructions.
+const (
+	CondZ CondType = iota
+	CondNZ
+	CondC
+	CondNC
+)
+
+func (c CondType) ToCondition(cpu CPU) bool {
+	switch c {
+	case CondZ:
+		return cpu.IsFlag(FlagZ)
+	case CondNZ:
+		return !cpu.IsFlag(FlagZ)
+	case CondC:
+		return cpu.IsFlag(FlagC)
+	case CondNC:
+		return !cpu.IsFlag(FlagC)
+	}
+	return false // Should not return this
+}
+
+/* CPU */
 
 // Represents a GB CPU.
 // TODO: Perhaps remove exportation
