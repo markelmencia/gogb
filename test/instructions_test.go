@@ -1994,3 +1994,16 @@ func TestJRcce(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestCALLnn(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.CALLnn(emu)
+
+	if emu.RAM.Get16Bit(emu.CPU.GetReg(cpu.SP)+1) != 0x0003 {
+		t.Fatal("Unexpected value in register SP")
+	}
+
+	if emu.CPU.GetReg(cpu.PC) != 0xFF93 {
+		t.Fatal("Unexpected PC value")
+	}
+}

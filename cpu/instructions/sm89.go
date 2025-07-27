@@ -1669,3 +1669,24 @@ func JRcce(cc cpu.CondType, emu emulator.Emulation) {
 		emu.CPU.PC++
 	}
 }
+
+// CALL nn: Call function
+//
+// Calls the function in the address specified
+// in the next two bytes in memory from the instruction,
+// meaning that the the return address will be pushed
+// into the stack and the PC value will change to nn.
+func CALLnn(emu emulator.Emulation) {
+	emu.CPU.PC++
+	nLo := emu.RAM.GetByte(emu.CPU.PC)
+	emu.CPU.PC++
+	nHi := emu.RAM.GetByte(emu.CPU.PC)
+	emu.CPU.PC++
+	a := uint16(nHi)<<8 | uint16(nLo)
+
+	emu.CPU.SP--
+	emu.RAM.Set16Bit(emu.CPU.GetReg(cpu.PC), emu.CPU.SP)
+	emu.CPU.SP--
+
+	emu.CPU.SetReg(cpu.PC, a)
+}
