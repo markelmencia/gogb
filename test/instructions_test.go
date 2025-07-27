@@ -2026,3 +2026,13 @@ func TestCALLccnn(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestRET(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.CALLnn(emu)
+	instructions.RET(emu)
+
+	if emu.CPU.GetReg(cpu.PC) != 0x0003 {
+		t.Fatal("Unexpected PC value")
+	}
+}

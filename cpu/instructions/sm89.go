@@ -1712,3 +1712,15 @@ func CALLccnn(cc cpu.CondType, emu emulator.Emulation) {
 		emu.CPU.SetReg(cpu.PC, a)
 	}
 }
+
+// RET: Return from function
+//
+// Returns from a function inconditionally,
+// changing the value in PC to the address
+// specified by the stack pointer.
+func RET(emu emulator.Emulation) {
+	v := emu.RAM.Get16Bit(emu.CPU.GetReg(cpu.SP) + 1)
+	emu.CPU.SetReg(cpu.SP, emu.CPU.GetReg(cpu.SP)+2)
+
+	emu.CPU.SetReg(cpu.PC, v)
+}
