@@ -2047,3 +2047,17 @@ func TestRETcc(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestRETI(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.CALLnn(emu)
+	instructions.RETI(emu)
+
+	if emu.CPU.GetReg(cpu.PC) != 0x0003 {
+		t.Fatal("Unexpected PC value")
+	}
+
+	if !emu.CPU.IME {
+		t.Fatal("Unexpected IME flag value")
+	}
+}

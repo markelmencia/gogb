@@ -1741,3 +1741,14 @@ func RETcc(cc cpu.CondType, emu emulator.Emulation) {
 	}
 
 }
+
+// RETI: Return from interrupt handler
+//
+// Unconditional return + enables interrupts
+func RETI(emu emulator.Emulation) {
+	v := emu.RAM.Get16Bit(emu.CPU.GetReg(cpu.SP) + 1)
+	emu.CPU.SetReg(cpu.SP, emu.CPU.GetReg(cpu.SP)+2)
+
+	emu.CPU.SetReg(cpu.PC, v)
+	emu.CPU.IME = true
+}
