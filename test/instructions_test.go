@@ -2036,3 +2036,14 @@ func TestRET(t *testing.T) {
 		t.Fatal("Unexpected PC value")
 	}
 }
+
+func TestRETcc(t *testing.T) {
+	emu := getExampleEmulation()
+	emu.CPU.SetFlag(true, cpu.FlagZ)
+	instructions.CALLnn(emu)
+	instructions.RETcc(cpu.CondNZ, emu)
+
+	if emu.CPU.GetReg(cpu.PC) != 0xFF94 {
+		t.Fatal("Unexpected PC value")
+	}
+}

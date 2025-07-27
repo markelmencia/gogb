@@ -1724,3 +1724,20 @@ func RET(emu emulator.Emulation) {
 
 	emu.CPU.SetReg(cpu.PC, v)
 }
+
+// RET cc: Return from function (conditional)
+//
+// Returns from a function if cc is true,
+// changing the value in PC to the address
+// specified by the stack pointer.
+func RETcc(cc cpu.CondType, emu emulator.Emulation) {
+	if cc.ToCondition(*emu.CPU) {
+		v := emu.RAM.Get16Bit(emu.CPU.GetReg(cpu.SP) + 1)
+		emu.CPU.SetReg(cpu.SP, emu.CPU.GetReg(cpu.SP)+2)
+
+		emu.CPU.SetReg(cpu.PC, v)
+	} else {
+		emu.CPU.PC++
+	}
+
+}
