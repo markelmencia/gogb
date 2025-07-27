@@ -98,6 +98,9 @@ type CPU struct {
 	IE uint16 // Interrupt Enable
 	SP uint16 // Stack Pointer
 	PC uint16 // Program Counter
+
+	// True if interrupt handlers are activated
+	IME bool
 }
 
 /* GETTERS / SETTERS */
