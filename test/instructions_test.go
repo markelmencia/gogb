@@ -2061,3 +2061,16 @@ func TestRETI(t *testing.T) {
 		t.Fatal("Unexpected IME flag value")
 	}
 }
+
+func TestRSTn(t *testing.T) {
+	emu := getExampleEmulation()
+	instructions.RSTn(emu)
+
+	if emu.CPU.GetReg(cpu.PC) != 0x0093 {
+		t.Fatal("Unexpectedd PC value")
+	}
+
+	if emu.RAM.Get16Bit(emu.CPU.GetReg(cpu.SP)+1) != 0x0001 {
+		t.Fatal("Unexpected value in register SP")
+	}
+}

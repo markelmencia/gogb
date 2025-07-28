@@ -1752,3 +1752,19 @@ func RETI(emu emulator.Emulation) {
 	emu.CPU.SetReg(cpu.PC, v)
 	emu.CPU.IME = true
 }
+
+// RST n: Restart / Call function (implied)
+//
+// Calls the 8-bit address in the next memory
+// value to the instruction
+func RSTn(emu emulator.Emulation) {
+	emu.CPU.PC++
+	v := uint16(emu.RAM.GetByte(emu.CPU.GetReg(cpu.PC)))
+
+	emu.CPU.SP--
+	emu.RAM.Set16Bit(emu.CPU.GetReg(cpu.PC), emu.CPU.SP)
+	emu.CPU.SP--
+
+	emu.CPU.SetReg(cpu.PC, v)
+
+}
